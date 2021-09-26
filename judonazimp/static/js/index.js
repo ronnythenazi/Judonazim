@@ -1,5 +1,7 @@
 
 
+
+
 $("#btn_expose_img").click(function ()
 {
   var display_val = $('#imghitler').css('opacity');
