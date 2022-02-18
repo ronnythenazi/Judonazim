@@ -82,6 +82,7 @@ $('.delete-popup-item').click(function(){
   $('body').append('<div id="darken-screen"></div>');
   $('#darken-screen').on('click', hide_confirm_popup);
 });
+
 $('body>*:not(#confirmation-box, #confirmation-box *)').click(function(){
   var hidden_status = $('#confirmation-box').css('display');
   if(hidden_status == none || String(hidden_status) == 'none')
@@ -90,6 +91,7 @@ $('body>*:not(#confirmation-box, #confirmation-box *)').click(function(){
   }
 
 });
+
 $('#confirm-cancel').click(function(){
   $('#confirmation-box').hide();
   $('#darken-screen').remove();
@@ -101,6 +103,59 @@ $('#confirm-delete').click(function(){
   var id = $('#caller-id').val();
   f_com_delete(caller_type, id);
 });
+
+function get_com_type(e)
+{
+  var ancestor = $(e).parents('.organ').first().parents('.item').first();
+  var id = $(ancestor).attr('id');
+  if(id.indexOf('sub-comment')>=0)
+  {
+    return 'sub_com';
+  }
+  return 'com';
+}
+function get_com_id(e)
+{
+  var ancestor = $(e).parents('.organ').first().parents('.item').first();
+  var id = $(ancestor).attr('id');
+  if(id.indexOf('sub-comment')>=0)
+  {
+    id = id.replace('sub-comment','');
+    return id;
+  }
+  id = id.replace('comment','');
+  return id;
+}
+$('.follow-popup-item').click(function(){
+
+  //id of com or sub_com
+  var id = get_com_id($(this));
+  // com or sub_com
+  var type = get_com_type($(this));
+
+  //now unfollow option is visible and fllow is hidden
+  $(this).siblings('.unfollow-popup-item').show();
+  $(this).hide();
+
+  //function inside article.html page, call ajax
+  f_follow(type, id, flag = 'follow');
+});
+
+$('.unfollow-popup-item').click(function(){
+
+  //id of com or sub_com
+  var id = get_com_id($(this));
+  // com or sub_com
+  var type = get_com_type($(this));
+
+  //now follow option is visible and unfllow is hidden
+  $(this).siblings('.follow-popup-item').show();
+  $(this).hide();
+
+  //function inside article.html page, call ajax
+  f_follow(type, id, flag = 'unfollow');
+});
+
 function hide_confirm_popup()
 {
   $('#confirmation-box').hide();

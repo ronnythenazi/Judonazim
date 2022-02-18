@@ -566,7 +566,44 @@
      transform: rotate(45deg);
     }
 }
-
+.btn-transparent:hover:after
+{
+  opacity: 0.3;
+}
+.btn-transparent:hover
+{
+  color:red;
+}
+.btn-transparent::after
+{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  content: '';
+  top: 0;
+  right: 0;
+  opacity: 0;
+  background-color: #505deb;
+  transition: all 0.2s;
+  border-radius: 10px;
+}
+.btn-transparent.btn-transparent-medium
+{
+  width:100px;
+  height:50px;
+  font-size:1.2rem;
+}
+.btn-transparent
+{
+  position: relative;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  font-family: sans-serif;
+  color:blue;
+}
 .red-bell-ring .notification-counter
 {
   animation-name:counter-bulb;

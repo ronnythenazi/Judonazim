@@ -14,7 +14,17 @@ from users.utils import token_generator
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 import threading
+from .coms import get_article_obj
 exposed_request = None
+
+def follow_or_unfollow(type, id, flag):
+    obj = get_article_obj(type, id)
+    login_user = exposed_request.user
+    if flag == 'follow':
+        follow_obj(obj, login_user)
+        return
+    unfollow_obj(obj, login_user)
+    return
 
 
 class EmailThread(threading.Thread):
@@ -166,6 +176,19 @@ def follow_com_by_sending_sub_com(sub_com):
     follow_post(post, usr)
     notify_all_followers(sub_com, usr)
     print('notify_all_followers(sub_com, usr)')
+
+def unfollow_obj(obj, follower):
+    print('try to unfollow obj')
+    is_already_follow = obj.followers.filter(id = follower.id).exists()
+    if is_already_follow == True:
+        obj.followers.remove(follower)
+        print('remove follower')
+
+def follow_obj(obj, follower):
+    is_already_follow = obj.followers.filter(id = follower.id).exists()
+    if is_already_follow == False:
+        obj.followers.add(follower)
+
 
 def follow_post(post, follower):
     is_already_follow = post.followers.filter(id = follower.id).exists()

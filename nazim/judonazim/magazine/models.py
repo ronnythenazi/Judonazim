@@ -47,15 +47,19 @@ class BlogPost(models.Model):
     dislikes = models.ManyToManyField(User, related_name = "post_dislikes", blank = True)
     followers = models.ManyToManyField(User, related_name = "post_followers", blank = True)
 
-
     def total_followers(self):
-        return self.follow.count()
+        return self.followers.count()
 
     def total_likes(self):
         return self.likes.count()
 
     def total_dislikes(self):
         return self.dislikes.count()
+
+    def is_follow(self):
+        if(self.followers.filter(id = exposed_request.user.id).exists()):
+            return True
+        return False
 
     public = "public"
     private = "private"
@@ -92,9 +96,8 @@ class Comment(models.Model):
     dislikes = models.ManyToManyField(User, related_name ="dislikes_com", blank = True)
     followers = models.ManyToManyField(User, related_name = "com_followers", blank = True)
 
-
     def total_followers(self):
-        return self.follow.count()
+        return self.followers.count()
 
     def total_likes(self):
         return self.likes.count()
@@ -109,6 +112,11 @@ class Comment(models.Model):
 
     def disliked(self):
         if(self.dislikes.filter(id = exposed_request.user.id).exists()):
+            return True
+        return False
+
+    def is_follow(self):
+        if(self.followers.filter(id = exposed_request.user.id).exists()):
             return True
         return False
 
@@ -138,7 +146,7 @@ class comment_of_comment(models.Model):
     followers = models.ManyToManyField(User, related_name = "sub_com_followers", blank = True)
 
     def total_followers(self):
-        return self.follow.count()
+        return self.followers.count()
 
     def total_likes(self):
         return self.likes.count()
@@ -153,6 +161,11 @@ class comment_of_comment(models.Model):
 
     def disliked(self):
         if(self.dislikes.filter(id = exposed_request.user.id).exists()):
+            return True
+        return False
+
+    def is_follow(self):
+        if(self.followers.filter(id = exposed_request.user.id).exists()):
             return True
         return False
 

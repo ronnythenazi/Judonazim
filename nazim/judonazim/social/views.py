@@ -18,7 +18,7 @@ from django.contrib.auth.models import User
 from .calcs import get_total_seconds
 from .members_permissions import is_user_allowed_to_edit
 from .coms import get_com, get_all_nested_coms_id
-from .notifications import follow_com_by_sending_sub_com, follow_post, follow_com, get_post, send_mail_notification
+from .notifications import follow_com_by_sending_sub_com, follow_post, follow_com, get_post, send_mail_notification, follow_or_unfollow
 
 def get_post_ajax(request):
     print('inside get_post_ajax')
@@ -255,6 +255,14 @@ def rate_com_refresh_ajax(request):
             com_rates_dict  = {'com_pk':str(com.pk), 'items':rate_users}
             coms_rates.append(com_rates_dict)
         return JsonResponse(coms_rates, safe = False)
+
+def follow(request):
+    if request.method == 'POST' and request.is_ajax:
+        type = request.POST.get('type')
+        id = request.POST.get('id')
+        flag = request.POST.get('flag')
+        follow_or_unfollow(type, id, flag)
+        return JsonResponse({})
 
 def rate_com_save_ajax(request):
     if not request.user.is_authenticated:

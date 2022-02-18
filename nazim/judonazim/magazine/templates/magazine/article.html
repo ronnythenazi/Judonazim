@@ -95,6 +95,15 @@
         {% endif %}
         <span class="msg ice-cream-clr">הירשם ותוכל להשפיע</span>
        {% endif %}
+      <div class="tiny-row-center-align" style="align-self:center;margin-right:5px;align-self:flex-end;">
+        <span style="color:black;font-size:1.5rem;font-family:fantasy;opacity:0.5;">  | </span>
+        {% if object.total_followers > 0 %}
+        <span class="follower-label" style="color:black;font-size:1rem;font-family:fantasy;opacity:0.8;cursor:pointer;">
+          {{object.total_followers}}  עוקבים
+        </span>
+        {% endif %}
+        <span  style="cursor:pointer;margin-right:5px;">{% include 'magazine/components/btns/btn_follow_article.html' %}</span>
+     </div>
      </div>
 
          <div class="subtitle post-subtitle-slug">{{object.subtitle}}</div>
@@ -225,9 +234,11 @@
                  <span class="msg ice-cream-clr">הירשם ותוכל להשפיע</span>
               {% endif %}
 
-              {% if comment.comment_usr == user or request.user.groups.all.0.name == 'admin' or request.user.groups.all.0.name == 'owner' %}
-              {% include 'magazine/components/popups/com_edit.html' %}
-              {% endif %}
+
+              {% include 'magazine/components/popups/com_ctl_article.html' %}
+
+
+
             </div>
 
 
@@ -401,9 +412,9 @@
               {% endif %}
               <span class="msg ice-cream-clr" style="font-size:1rem;">הירשם ותוכל להשפיע</span>
              {% endif %}
-             {% if comment_of_comment.comment_of_comment_usr == user or request.user.groups.all.0.name == 'admin' or request.user.groups.all.0.name == 'owner' %}
-             {% include 'magazine/components/popups/com_edit.html' %}
-             {% endif %}
+
+             {% include 'magazine/components/popups/sub_com_ctl_article.html' %}
+
             </div>
 
             <a id="a-sub-comment{{comment_of_comment.pk}}" href ="#sub-comment{{comment_of_comment.pk}}" class="tiny-row-center-align"><span class="tiny-font" style="color:#2F9BDD;">{{comment_of_comment.date_added | date:'d/m/Y' | safe}} בשעה: {{comment_of_comment.date_added | date:'H:i' | safe}}</span></a>
@@ -674,6 +685,28 @@ function f_ajax_update_com(com_type, com_id, body)
 }
 </script>
 <script>
+
+function f_follow(type, id, flag)
+{
+  var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+   $.ajax({
+       type: 'POST',
+       url: "{% url 'social:follow' %}",
+       data: {'type':type,
+             'id':id,
+             'flag':flag,
+             'csrfmiddlewaretoken': csrftoken,
+             },
+       success: function (response) {
+
+       },
+       error: function (response) {
+
+       }
+   });
+}
+
+
 function f_com_delete(com_type, com_id)
 {
   var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
@@ -1756,4 +1789,5 @@ function check_post_rating()
 </script>
 
 <script type="text/javascript" src="{% static 'magazine/com_edit/com_edit.js' %}"> </script>
+<script type="text/javascript" src="{% static 'magazine/js/article.js' %}"> </script>
 {%endblock moreJs%}

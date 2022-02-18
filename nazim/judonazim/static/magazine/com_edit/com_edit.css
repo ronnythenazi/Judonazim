@@ -87,7 +87,7 @@ display:none;
 flex-direction:column;
 justify-content: center;
 align-items:flex-start;
-left:0;
+/*left:0;*/
 top:5px;
 position:absolute;
 cursor:pointer;

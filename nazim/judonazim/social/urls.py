@@ -29,5 +29,6 @@ path('notification/follow-com-notification/<int:notification_pk>', follow_com_no
 path('notification/follow-sub-com-notification/<int:notification_pk>', follow_sub_com_notification, name='follow-sub-com-notification'),
 path('notification/get-post', get_post_ajax, name = 'get-post'),
 path('notification/page-404', page_not_found, name='page-404'),
+path('follow-ajax/', follow, name='follow'),
 
 ]

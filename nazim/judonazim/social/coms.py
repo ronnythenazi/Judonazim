@@ -6,6 +6,12 @@ from django.contrib.contenttypes.models import ContentType
 from magazine.models import Comment, Profile, BlogPost, comment_of_comment
 from magazine.dates import get_total_diff_seconds, get_curr_datetime, get_curr_s_datetime
 
+def get_article_obj(type, id):
+    if type == 'post':
+        post = get_object_or_404(BlogPost, id = id)
+        return post
+    return get_com(type, id)
+
 def get_com(com_type, com_id):
     com = None
     if com_type == 'com':
