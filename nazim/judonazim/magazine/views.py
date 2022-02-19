@@ -241,7 +241,7 @@ def Article(request, pk, pos_id = '#start'):
         liked = post.likes.filter(id = request.user.id).exists()
         disliked = post.dislikes.filter(id = request.user.id).exists()
 
-    if request.method == 'POST':
+    if request.method == 'POST' and request.user.is_authenticated:
         if 'btn-send-comment' in request.POST:
             if comment_frm.is_valid():
                 comment_frm.instance.post = post #request.post

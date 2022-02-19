@@ -125,6 +125,8 @@ def com_delete(request):
 
 
 def sub_com_save_ajax(request):
+    if not request.user.is_authenticated:
+        JsonResponse({'status':'not-log-in'})
     if request.method == 'POST' and request.is_ajax:
         com_parent_id = request.POST.get('com_parent_id')
         print('sub_com_save_ajax:com_parent_id=' + str(com_parent_id))
@@ -153,7 +155,6 @@ def sub_com_save_ajax(request):
                 print('try sub_com.to_sub_comment = replied_to_sub_com')
                 sub_com.to_sub_comment = replied_to_sub_com
                 sub_com.save()
-                print('success!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!')
                 notification = Notification.objects.create(notification_type = 2, from_user = request.user, com_of_com = sub_com, to_user = com_parent.comment_usr)
                 send_mail_notification(notification.pk)
                 print('sub_com_save_ajax:saved replied to sub_com_id {sub_com_id} to user {user}'.format(sub_com_id = replied_to_sub_com_id, user = str(request.user.username)))
@@ -170,7 +171,7 @@ def sub_com_save_ajax(request):
         date = str(sub_com.date_added.strftime('%d/%m/%Y'))
         print('sub_com_save_ajax: date =' + date)
         follow_com_by_sending_sub_com(sub_com)
-        return JsonResponse({'sub_com_id':str(sub_com.id), 'date':date, 'time':t})
+        return JsonResponse({'sub_com_id':str(sub_com.id), 'date':date, 'time':t, 'status':'success'})
 
 def rate_sub_com_save_ajax(request):
     if not request.user.is_authenticated:
@@ -257,12 +258,12 @@ def rate_com_refresh_ajax(request):
         return JsonResponse(coms_rates, safe = False)
 
 def follow(request):
-    if request.method == 'POST' and request.is_ajax:
+    if request.method == 'POST' and request.is_ajax and request.user.is_authenticated:
         type = request.POST.get('type')
         id = request.POST.get('id')
         flag = request.POST.get('flag')
         follow_or_unfollow(type, id, flag)
-        return JsonResponse({})
+    return JsonResponse({})
 
 def rate_com_save_ajax(request):
     if not request.user.is_authenticated:

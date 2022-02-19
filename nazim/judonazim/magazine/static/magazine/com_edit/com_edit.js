@@ -77,6 +77,8 @@ $('.com-edit-popup-item').click(function(){
   $(this).parents('.com-edit-popup').first().find('.com-ctl-popup').css('visibility', 'hidden');
 });
 
+
+
 $('.delete-popup-item').click(function(){
   $('#confirmation-box').fadeIn("slow");
   $('body').append('<div id="darken-screen"></div>');
@@ -161,3 +163,44 @@ function hide_confirm_popup()
   $('#confirmation-box').hide();
   $(this).remove();
 }
+
+function hide_popup_msg()
+{
+  $('#popup-msg').hide();
+  $(this).remove();
+}
+
+
+
+
+
+function set_popup_msg(title, body, ok_btn)
+{
+  $('#popup-msg .popup-msg-title').text(title);
+  $('#popup-msg .popup-msg-body').text(body);
+  $('#popup-msg #popup-msg-cancel').text(ok_btn);
+}
+
+$('.not-log-in').click(function(){
+  title = "אינך מחובר";
+  body = "רק משתמשים רשומים ומחוברים יכולים להגיב";
+  ok_btn = "הבנתי";
+  set_popup_msg(title, body, ok_btn);
+  $('#popup-msg').fadeIn("slow");
+  $('body').append('<div id="darken-screen"></div>');
+  $('#darken-screen').on('click', hide_popup_msg);
+});
+
+$('body>*:not(#popup-msg, #popup-msg *)').click(function(){
+  var hidden_status = $('#popup-msg').css('display');
+  if(hidden_status == none || String(hidden_status) == 'none')
+  {
+    return;
+  }
+
+});
+
+$('#popup-msg-cancel').click(function(){
+  $('#popup-msg').hide();
+  $('#darken-screen').remove();
+});

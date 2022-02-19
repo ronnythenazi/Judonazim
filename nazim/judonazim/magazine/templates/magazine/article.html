@@ -35,7 +35,7 @@
     <div class="center" style="width:100%;">
      <div class="post">
        <span class="posttitle shiny-blue-clr post-title-slug" style="font-family:formal3-bold;color:black !important;opacity:0.9;font-size:3.5rem;">{{ object.title }}  </span>
-     <div id="rate-post-form" class="tiny-row-center-align">
+     <div id="rate-post-form" class="tiny-row-center-align" style="justify-content:center;">
        {% if object.author.profile.profile_img.url %}
            <a class="author big tiny-row-center-align"> <img class="tiny-avatar" src="{{object.author.profile.profile_img.url}}"/>  <span> {{object.author | safe}}</span> &nbsp; | &nbsp;
                 <span>{{object.datepublished | date:'d/m/Y' | safe}}</span>
@@ -95,15 +95,14 @@
         {% endif %}
         <span class="msg ice-cream-clr">הירשם ותוכל להשפיע</span>
        {% endif %}
-      <div class="tiny-row-center-align" style="align-self:center;margin-right:5px;align-self:flex-end;">
-        <span style="color:black;font-size:1.5rem;font-family:fantasy;opacity:0.5;">  | </span>
+      <div class="super-tiny-row-center-align" style="justify-content:center;">
         {% if object.total_followers > 0 %}
-        <span class="follower-label" style="color:black;font-size:1rem;font-family:fantasy;opacity:0.8;cursor:pointer;">
+        <span class="follower-label ice-cream-clr" style="font-size:1rem;font-family:fantasy;opacity:0.8;cursor:pointer;">
           {{object.total_followers}}  עוקבים
         </span>
         {% endif %}
         <span  style="cursor:pointer;margin-right:5px;">{% include 'magazine/components/btns/btn_follow_article.html' %}</span>
-     </div>
+      </div>
      </div>
 
          <div class="subtitle post-subtitle-slug">{{object.subtitle}}</div>
@@ -138,8 +137,11 @@
            <span class="comment-label">התגובה שלך</span>
            {{comment_frm.body}}
         </div>
-
+    {% if user.is_authenticated %}
      <button type="submit" style="width:100%;" class="btn-post-comment btn-loader" name="btn-send-comment">שלח</button>
+     {% else %}
+     <button type="button" style="width:100%;" class="btn-post-comment btn-loader not-log-in" name="btn-send-comment">שלח</button>
+     {% endif %}
      {% if object.comments.all|length > 0 %}
    <div class="tiny-row-center-align comment-reply-title" style="justify-content:center;width:100%;margin-top:20px;"><span id="lbl-count-comments"> {{object.comments.all | length}}</span> <span id="coms-to-article-lbl">תגובות למאמר</span></div>
      {% endif %}
@@ -177,9 +179,9 @@
               {%endif%}
             </span>
             {% if comment.comment_usr %}
-            <b style="margin-right:-10px;" class="author author-comment">{{comment.comment_usr}} הגיב:</b>
+            <b style="margin-right:-10px;" class="author author-comment tiny-row-center-align"><span>{{comment.comment_usr}}</span> <span>הגיב:</span></b>
             {% else %}
-            <b style="margin-right:-10px;" class="author author-comment">פלוני הגיב</b>
+            <b style="margin-right:-10px;" class="author author-comment tiny-row-center-align">פלוני הגיב</b>
             {%  endif %}
 
 
@@ -231,7 +233,7 @@
                  {% else %}
                  <span class="rate-count rate-red" style="display:none;"></span>
                  {% endif %}
-                 <span class="msg ice-cream-clr">הירשם ותוכל להשפיע</span>
+                 <span class="msg ice-cream-clr" style="white-space: nowrap;">הירשם ותוכל להשפיע</span>
               {% endif %}
 
 
@@ -286,7 +288,11 @@
             <input type="hidden" class="replied-to-sub-com-id" value="">
             <div class="super-tiny-row-center-align" style="justify-content:space-between;width:100%;">
               <button type="button" class="btn-post-comment btn-sub-com-cancel">בטל</button>
+              {% if user.is_authenticated %}
               <button type="button" class="btn-post-comment btn-sub-com-save">שמור</button>
+              {% else %}
+              <button type="button" class="btn-post-comment not-log-in">שמור</button>
+              {% endif %}
             </div>
         </div>
      </div>
@@ -327,7 +333,7 @@
 
 
 
-            <!--<b style="margin-right:-10px;" class="author author-sub-comment">פלוני הגיב:</b>-->
+
               {% if comment_of_comment.to_sub_comment  %}
                   {% if comment_of_comment.comment_of_comment_usr %}
                      {% if comment_of_comment.to_sub_comment.comment_of_comment_usr %}
@@ -466,7 +472,11 @@
              <input type="hidden" class="replied-to-sub-com-id" replied-to-sub-com-id="{{comment_of_comment.pk}}">
              <div class="super-tiny-row-center-align" style="justify-content:space-between;width:100%;">
                <button type="button" class="btn-post-comment btn-sub-com-cancel">בטל</button>
+               {% if user.is_authenticated %}
                <button type="button" class="btn-post-comment btn-sub-com-save">שמור</button>
+               {% else %}
+               <button type="button" class="btn-post-comment not-log-in">שמור</button>
+              {% endif %}
              </div>
            </div>
        </div>
@@ -1050,6 +1060,10 @@ function f_sub_com_save()
              },
        success: function (response) {
          var result = response;
+         if(result['status'] == 'not-log-in')
+         {
+           return;
+         }
          var sub_com_id = result['sub_com_id'];
          var date = result['date'];
          var time = result ['time'];
