@@ -129,3 +129,14 @@ https://developer.mozilla.org/en-US/docs/Web/HTML/Element/input/file
   #html to email body
 
   #https://stackoverflow.com/questions/2809547/creating-email-templates-with-django
+
+
+  #Get text from cursor position - SOLUTION
+  #https://ckeditor.com/old/forums/CKEditor-3.x/Get-text-cursor-position-SOLUTION
+  #https://ckeditor.com/old/forums/Support/Text-around-cursor
+
+  #https://ckeditor.com/old/forums/CKEditor/editor.setDatasomeHtml-is-not-keeping-s-and-styles
+  #https://ckeditor.com/docs/ckeditor4/latest/guide/dev_advanced_content_filter.html
+
+
+  #https://stackoverflow.com/questions/29922214/get-the-coordinates-of-selection-in-ckeditor

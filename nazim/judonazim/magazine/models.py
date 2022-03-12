@@ -241,7 +241,7 @@ class Album(models.Model):
 
 class Notification(models.Model):
     # 1=like, 2=comment, 3=follow user, 4=dislike, 5=com on post you are follow,
-    # 6=sub_com on post you are follow, #7 sub_com on com you are follow
+    # 6=sub_com on post you are follow, #7 sub_com on com you are follow, 8 = tag
 
     notification_type = models.IntegerField()
     to_user = models.ForeignKey(User, related_name = 'notification_to', on_delete = models.CASCADE, null = True)

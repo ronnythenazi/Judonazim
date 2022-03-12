@@ -29,6 +29,7 @@
 
    {%block moreLinks%}
    <link rel="stylesheet" href="{% static 'magazine/com_edit/com_edit.css' %}">
+   <link rel="stylesheet" href="{% static 'memebers/css/profiles.css' %}">
    {%endblock moreLinks%}
 
      {%block body%}
@@ -268,12 +269,12 @@
                      </div>
                </div>
                <div class="display-view" style="justify-content:flex-start;margin-top:0px;align-items:flex-start;width:500px;box-sizing:border-box;word-wrap: break-word;">
-                 <div class="com-to-display">{{comment.body | safe}}</div>
+                 <div class="com-to-display com-body">{{comment.body | safe}}</div>
                  <span class="btn-edit" style="align-self:flex-start;">{%include 'magazine/components/btns/btnedit_smaller.html'%}</span>
                </div>
           </div>
           {% else %}
-          <div style="width:500px;box-sizing:border-box;word-wrap:break-word;">{{comment.body | safe }}</div>
+          <div class="com-body" style="width:500px;box-sizing:border-box;word-wrap:break-word;">{{comment.body | safe }}</div>
           {% endif %}
 
       <div class="reply-parent" style="margin-top:10px;width:100%;">
@@ -450,13 +451,13 @@
                </div>
                <div class="display-view" style="justify-content:flex-start;margin-top:20px;align-items:flex-start;width:500px;box-sizing:border-box;word-wrap: break-word;">
                  <!-- class="sub-comment" bellow from 28/01/2022-->
-                 <div class="sub-comment com-to-display" >{{comment_of_comment.body | safe}}</div>
+                 <div class="sub-comment com-to-display com-body" >{{comment_of_comment.body | safe}}</div>
                  <span class="btn-edit" style="align-self:flex-start;margin-top:20px;">{%include 'magazine/components/btns/btnedit_smaller.html'%}</span>
                </div>
           </div>
           {% else %}<!-- 24/1/2022 -->
           <!-- end 24/1/2022-->
-          <div class="sub-comment" style="width:500px;box-sizing:border-box;word-wrap: break-word;">{{comment_of_comment.body | safe }}</div> <!-- older -->
+          <div class="sub-comment com-body" style="width:500px;box-sizing:border-box;word-wrap: break-word;">{{comment_of_comment.body | safe }}</div> <!-- older -->
           {% endif %} <!-- 24/1/2022 -->
         </div>
 
@@ -605,12 +606,12 @@
            </div>
      </div>
      <div class="display-view" style="justify-content:flex-start;margin-top:20px;align-items:flex-start;width:500px;box-sizing:border-box;word-wrap: break-word;">
-       <div class="sub-comment com-to-display">comment_of_comment_body to replace</div>
+       <div class="sub-comment com-to-display com-body">comment_of_comment_body to replace</div>
        <span class="btn-edit" style="align-self:flex-start;margin-top:20px;">{%include 'magazine/components/btns/btnedit_smaller.html'%}</span>
      </div>
 
 </div>
-<div class="sub-comment not-author" style="width:500px;box-sizing:border-box;word-wrap: break-word;">comment_of_comment.body to replace</div>
+<div class="sub-comment not-author com-body" style="width:500px;box-sizing:border-box;word-wrap: break-word;">comment_of_comment.body to replace</div>
 </div>
 
 <div class="reply-parent" style="margin-top:10px;width:500px;">
@@ -664,7 +665,8 @@ function f_ajax_update_com(com_type, com_id, body)
      }
      else if(com_type == 'sub_com')
      {
-       com_prefix= 'comment-of-comment';
+       //com_prefix= 'comment-of-comment';
+       com_prefix = 'sub-comment'
      }
      var com_selector_name = '#' + com_prefix + com_id;
      if(result == 'failed')
@@ -687,6 +689,14 @@ function f_ajax_update_com(com_type, com_id, body)
      var update_lbl = $(com_selector_name).find('.last-update').first();
      var last_update = response['last_update'];
      $(update_lbl).text(last_update + ' ' + 'עודכן לאחרונה ב');
+     //yahoo
+     var s_body = response['body'];
+     $(com_selector_name).find('.com-body').html(s_body);
+     var cke_edit = $(com_selector_name).find('.comment-edit-parent .ckeditor');
+     var cke_edit_name = $(cke_edit).attr('name');
+     set_cke_body(s_body, cke_edit_name);
+
+
     },
     error:function(response){
 
@@ -1078,7 +1088,9 @@ function f_sub_com_save()
            author_name = $('#curr-user').val();
          }
          var profile_img = $('#profile-img').val();
-         clone_sub_com(sub_com_id = sub_com_id, com_parent_id = com_parent_id, body=body, time = time, date = date, author_name = author_name, replied_to_sub_com_id = replied_to_sub_com_id, profile_img);
+         //yahoo2
+         var s_body = response['body'];
+         clone_sub_com(sub_com_id = sub_com_id, com_parent_id = com_parent_id, body=s_body, time = time, date = date, author_name = author_name, replied_to_sub_com_id = replied_to_sub_com_id, profile_img);
          $(ancestor).find('.reply-label-brother').hide();
          var total_coms = $('.item').length;
          $('#lbl-count-comments').text(total_coms);

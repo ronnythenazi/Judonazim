@@ -18,7 +18,9 @@ from django.contrib.auth.models import User
 from .calcs import get_total_seconds
 from .members_permissions import is_user_allowed_to_edit
 from .coms import get_com, get_all_nested_coms_id
-from .notifications import follow_com_by_sending_sub_com, follow_post, follow_com, get_post, send_mail_notification, follow_or_unfollow
+from .notifications import replaceTaggedUsersToTaggedElemesInCom, follow_com_by_sending_sub_com, follow_post, follow_com, get_post, send_mail_notification, follow_or_unfollow, tag_user, get_notification_obj_type_from_id, get_notification_obj
+from users.members import get_profile_info, get_active_profile_partial_lst_start_with
+
 
 def get_post_ajax(request):
     print('inside get_post_ajax')
@@ -28,30 +30,26 @@ def get_post_ajax(request):
         return JsonResponse({'id':str(post.id), 'title':str(post.title)})
 
 def com_update(request):
-    print('inside com_update')
     if request.method == 'POST' and request.is_ajax:
         com_type = request.POST.get('com_type')
         com_id = request.POST.get('com_id')
-        print('com_type ' + com_type + ' com_id ' + com_id)
         allowed_status = is_user_allowed_to_edit(com_type, com_id)
         answer = allowed_status['answer']
         if answer == False:
             reason = allowed_status['reason']
-            print('failed update')
-            print('reason ' + reason)
             return JsonResponse({'result':'failed', 'reason':reason})
         body = request.POST.get('body')
         com = get_com(com_type, com_id)
         com.body = body
-        print('before save')
         com.save()
-        print('after saved')
         date_edited = str(com.date_last_update)
         show_date_edited = allowed_status['show-date-edited']
+        tag_user(com)
+        replaceTaggedUsersToTaggedElemesInCom(com)
+        s_body = str(com.body)
         if show_date_edited == 'true':
-            return JsonResponse({'result':'success','last_update':date_edited})
-        print('update comment succeded! :)')
-        return JsonResponse({'result':'success','last_update':'none' })
+            return JsonResponse({'result':'success','last_update':date_edited,'body':s_body})
+        return JsonResponse({'result':'success','last_update':'none','body':s_body})
 
 
 def com_delete(request):
@@ -126,13 +124,11 @@ def com_delete(request):
 
 def sub_com_save_ajax(request):
     if not request.user.is_authenticated:
-        JsonResponse({'status':'not-log-in'})
+        return JsonResponse({'status':'not-log-in'})
     if request.method == 'POST' and request.is_ajax:
         com_parent_id = request.POST.get('com_parent_id')
-        print('sub_com_save_ajax:com_parent_id=' + str(com_parent_id))
         com_parent = get_object_or_404(Comment, id = com_parent_id)
         replied_to_sub_com_id = request.POST.get('replied_to_sub_com_id')
-        print('sub_com_save_ajax:replied_to_sub_com_id=' + str(replied_to_sub_com_id))
         body = request.POST.get('body')
         #print('sub_com_save_ajax:body=' + str(body))
         if replied_to_sub_com_id == None or replied_to_sub_com_id == '':
@@ -140,71 +136,56 @@ def sub_com_save_ajax(request):
                 sub_com = comment_of_comment.objects.create(comment_of_comment_usr = request.user, body = body, comment = com_parent)
                 notification = Notification.objects.create(notification_type = 2, from_user = request.user, com_of_com = sub_com, to_user = com_parent.comment_usr)
                 send_mail_notification(notification.pk)
-                print('sub_com_save_ajax:saved comment to user ' + str(request.user.username))
             else:
                 sub_com = comment_of_comment.objects.create(body = body, comment = com_parent)
                 notification = Notification.objects.create(notification_type = 2,  com_of_com = sub_com, to_user = com_parent.comment_usr)
                 send_mail_notification(notification.pk)
-                print('sub_com_save_ajax:saved comment to someone')
         else:
             replied_to_sub_com = get_object_or_404(comment_of_comment, id = replied_to_sub_com_id)
-            print('replied_to_sub_com =' + str(replied_to_sub_com.id))
             if request.user.is_authenticated:
                 sub_com = comment_of_comment.objects.create(comment_of_comment_usr = request.user, body = body, comment = com_parent)
-                print('new sub comment created')
-                print('try sub_com.to_sub_comment = replied_to_sub_com')
                 sub_com.to_sub_comment = replied_to_sub_com
                 sub_com.save()
                 notification = Notification.objects.create(notification_type = 2, from_user = request.user, com_of_com = sub_com, to_user = com_parent.comment_usr)
                 send_mail_notification(notification.pk)
-                print('sub_com_save_ajax:saved replied to sub_com_id {sub_com_id} to user {user}'.format(sub_com_id = replied_to_sub_com_id, user = str(request.user.username)))
             else:
                 sub_com = comment_of_comment.objects.create(body = body, comment = com_parent)
                 sub_com.to_sub_comment = replied_to_sub_com
                 sub_com.save()
-                print('sub-com saved')
                 notification = Notification.objects.create(notification_type = 2,  com_of_com = sub_com, to_user = com_parent.comment_usr)
                 send_mail_notification(notification.pk)
-                print('sub_com_save_ajax:saved replied to sub_com_id {sub_com_id} to someone'.format(sub_com_id = replied_to_sub_com_id))
         t = str(sub_com.date_added.strftime('%H:%M:%S'))
-        print('sub_com_save_ajax: time =' + t)
         date = str(sub_com.date_added.strftime('%d/%m/%Y'))
-        print('sub_com_save_ajax: date =' + date)
         follow_com_by_sending_sub_com(sub_com)
-        return JsonResponse({'sub_com_id':str(sub_com.id), 'date':date, 'time':t, 'status':'success'})
+        tag_user(sub_com)
+        replaceTaggedUsersToTaggedElemesInCom(sub_com)
+        return JsonResponse({'sub_com_id':str(sub_com.id), 'date':date, 'time':t, 'status':'success', 'body':str(sub_com.body)})
 
 def rate_sub_com_save_ajax(request):
     if not request.user.is_authenticated:
         return JsonResponse({})
     if request.method == 'POST' and request.is_ajax:
         com_of_com_pk = request.POST.get('com_of_com_pk')
-        print('save_ajax:com_of_com_pk=' + str(com_of_com_pk))
         com_of_com = get_object_or_404(comment_of_comment, id = com_of_com_pk)
         rate_type = request.POST.get('rate_type')
-        print('com_of_com-rate-type:' + rate_type)
         if rate_type == 'like-com-of-com':
-            print('com_of_com liked')
             is_already_liked = com_of_com.likes.filter(id = request.user.id).exists()
             if is_already_liked:
                 com_of_com.likes.remove(request.user)
-                print('remove like for com_of_com')
             else:
                 com_of_com.likes.add(request.user)
                 com_of_com.dislikes.remove(request.user)
                 notification = Notification.objects.create(notification_type = 1, from_user = request.user, com_of_com = com_of_com, to_user = com_of_com.comment_of_comment_usr)
                 send_mail_notification(notification.pk)
-                print('added like for com_of_com')
         elif rate_type == 'dislike-com-of-com':
             is_already_disliked = com_of_com.dislikes.filter(id = request.user.id).exists()
             if is_already_disliked:
                 com_of_com.dislikes.remove(request.user)
-                print('removed dislike for com_of_com')
             else:
                 com_of_com.dislikes.add(request.user)
                 com_of_com.likes.remove(request.user)
                 notification = Notification.objects.create(notification_type = 4, from_user = request.user, com_of_com = com_of_com, to_user = com_of_com.comment_of_comment_usr)
                 send_mail_notification(notification.pk)
-                print('added dislike for com_of_com')
         follow_com(com_of_com.comment, request.user)
     return JsonResponse({})
 
@@ -224,7 +205,6 @@ def rate_post_refresh_ajax(request):
 def rate_sub_com_refresh_ajax(request):
     if request.method == 'GET' and request.is_ajax:
         post_pk = request.GET.get('post_pk')
-        print('post_pk for rate_sub_com_refresh_ajax=' + str(post_pk))
         post = BlogPost.objects.get(pk = post_pk)
         sub_coms_rates = []
         for com in post.comments.all():
@@ -353,17 +333,6 @@ def ajax_notifications(request):
 
             return JsonResponse({"next_notifications": ser_instance})
 
-        """
-        try:
-            print('try adding 999 at the end of datetime')
-            last_notification_date = parse_datetime(s_last_notification_date + '999')
-            print('new date is now' + str(last_notification_date))
-        except:
-            print('failed adding 999')
-            last_notification_date = parse_datetime(s_last_notification_date)
-            print('new date is now ' +  str(last_notification_date))
-        print('local date pass as:' + s_last_notification_date)
-        """
         last_notification_date = parse_datetime(s_last_notification_date)
         print('new date is now' + str(last_notification_date))
         print('local date pass as:' + s_last_notification_date)
@@ -394,6 +363,21 @@ def ajax_notifications(request):
 
         return JsonResponse({"next_notifications": ser_instance})
 
+def get_tagged_user_lst_suggestion(request):
+    if request.is_ajax and request.method == "GET":
+        s_query = request.GET.get('s_query')
+        lst_profiles = get_active_profile_partial_lst_start_with(s_query)
+        return JsonResponse(lst_profiles, safe=False)
+
+def get_tagged_user(request):
+    if request.is_ajax and request.method == "GET":
+        username = request.GET.get('username')
+        profile_info = get_profile_info(username)
+        if len(profile_info) == 0:
+            profile_info['status'] =  'empty'
+            return JsonResponse(profile_info)
+        profile_info['status'] = 'matched'
+        return JsonResponse(profile_info)
 
 
 def ajax_get_user_name(request):
@@ -450,29 +434,54 @@ class PostNotification(View):
         except Notification.DoesNotExist:
             return redirect('social:page-404')
 
+def tag_you_notification(request, notification_pk):
+    try:
+        notification = get_notification_obj(notification_pk)
+        type = get_notification_obj_type_from_id(notification_pk)
+        if type == 'com':
+            params = com_has_seen(notification)
+        else:
+            # this mean type is sub_com
+            params = sub_com_has_seen(notification)
+        return redirect('magazine:anArticle', pk = params['pk'], pos_id = params['pos_id'])
+    except Notification.DoesNotExist:
+        return redirect('social:page-404')
+
+def com_has_seen(notification):
+    com = notification.comment
+    com_id = com.id
+    post_id = com.post.id
+    notification.user_has_seen = True
+    notification.save()
+    return {'pk':post_id, 'pos_id':"-replace-me-comment" + str(com_id)}
+
+def sub_com_has_seen(notification):
+    sub_com = notification.com_of_com
+    com = sub_com.comment
+    post_id = com.post.id
+    sub_com_id = sub_com.id
+    notification.user_has_seen = True
+    notification.save()
+    return {'pk':post_id, 'pos_id':"-replace-me-sub-comment" + str(sub_com_id)}
+
+
+
 def follow_com_notification(request, notification_pk):
     try:
-        notification = Notification.objects.get(pk = notification_pk)
-        com = notification.comment
-        com_id = com.id
-        post_id = com.post.id
-        notification.user_has_seen = True
-        notification.save()
-        return redirect('magazine:anArticle', pk = post_id, pos_id = "-replace-me-comment" + str(com_id))
+        notification = get_notification_obj(notification_pk)
+        #notification = Notification.objects.get(pk = notification_pk)
+        params = com_has_seen(notification)
+        return redirect('magazine:anArticle', pk = params['pk'], pos_id = params['pos_id'])
     except Notification.DoesNotExist:
         return redirect('social:page-404')
 
 
 def follow_sub_com_notification(request, notification_pk):
     try:
-        notification = Notification.objects.get(pk = notification_pk)
-        sub_com = notification.com_of_com
-        com = sub_com.comment
-        post_id = com.post.id
-        sub_com_id = sub_com.id
-        notification.user_has_seen = True
-        notification.save()
-        return redirect('magazine:anArticle', pk = post_id, pos_id = "-replace-me-sub-comment" + str(sub_com_id))
+        notification = get_notification_obj(notification_pk)
+        #notification = Notification.objects.get(pk = notification_pk)
+        params = sub_com_has_seen(notification)
+        return redirect('magazine:anArticle', pk = params['pk'], pos_id = params['pos_id'])
     except Notification.DoesNotExist:
         return redirect('social:page-404')
 

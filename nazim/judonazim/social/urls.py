@@ -30,5 +30,8 @@ path('notification/follow-sub-com-notification/<int:notification_pk>', follow_su
 path('notification/get-post', get_post_ajax, name = 'get-post'),
 path('notification/page-404', page_not_found, name='page-404'),
 path('follow-ajax/', follow, name='follow'),
+path('notification/tag-you-notification/<int:notification_pk>', tag_you_notification, name = 'tag-you-notification'),
+path('get-tagged-user', get_tagged_user, name = 'get-tagged-user'),
+path('get-tagged-user-lst-suggestion', get_tagged_user_lst_suggestion ,name='get-tagged-user-lst-suggestion'),
 
 ]

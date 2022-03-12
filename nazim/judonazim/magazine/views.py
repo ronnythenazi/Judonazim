@@ -10,7 +10,7 @@ from django.db.models import Count, Q
 from django.utils.dateparse import parse_datetime
 from datetime import datetime, timedelta
 from .dates import *
-from social.notifications import follow_post_by_sending_com
+from social.notifications import follow_post_by_sending_com, tag_user, replaceTaggedUsersToTaggedElemesInCom
 import math
 
 
@@ -253,6 +253,8 @@ def Article(request, pk, pos_id = '#start'):
                 else:
                     notification = Notification.objects.create(notification_type = 2, comment = com_obj, to_user = post.author)
                 follow_post_by_sending_com(com = com_obj)
+                tag_user(com_obj)
+                replaceTaggedUsersToTaggedElemesInCom(com_obj)
                 dict = {'pos_id':pos_id, 'object':post, 'comment_frm':comment_frm, 'com_of_com_frm':com_of_com_frm , 'status':'posted', 'com_obj':com_obj, 'total_likes':total_likes, 'total_dislikes':total_dislikes, 'liked':liked, 'disliked' :disliked}
                 return render(request, 'magazine/article.html', dict )
 

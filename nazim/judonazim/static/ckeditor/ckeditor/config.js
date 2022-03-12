@@ -11,4 +11,8 @@ CKEDITOR.editorConfig = function( config ) {
          config.contentsLangDirection = 'rtl';
          config.defaultLanguage = "he";
          config.language = 'he';
+         config.allowedContent =
+         'h1 h2 h3 p blockquote strong em;' +
+         'span(tagged-user)[color, font-weight];' +
+         'img(left,right, pos-bookmark)[!src,alt,width,height];';
 };

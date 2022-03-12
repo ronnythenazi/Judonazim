@@ -229,7 +229,6 @@
 </audio>
 <input type="hidden" id="caret-x" value="-1">
 <input type="hidden" id="caret-y" value="-1">
-<input type="hidden" id="activated_editor" value="">
 </div>
 {% include 'magazine/components/popups/confirmation.html' %}
 {% include 'magazine/components/popups/popup_msg.html' %}
@@ -297,7 +296,7 @@ function call_get_tagged_user_from_ckeditor_event(editor)
 
     return;
   }
-  //get_tagged_user_ajax(tagged_user, editor);
+  get_tagged_user_ajax(tagged_user, editor);
   get_user_list_suggestion_to_tag(tagged_user);
 
 }
@@ -347,7 +346,6 @@ CKEDITOR.on('instanceReady', function(evt) {
         if (e.data.keyCode == '13')
         {
           call_auto_complete_enter_pressed(editor, e);
-          $('#activated_editor').val(editor.name);
           //call_get_tagged_user_from_ckeditor_event(editor, suggestion_user_lst=false);
         }
     });
@@ -359,10 +357,16 @@ CKEDITOR.on('instanceReady', function(e) {
      var editor = e.editor;
     //  e.editor.on('contentDom', function() {
           e.editor.document.on('keydown', function(event) {
-            //var kc = event.data.getKey();
-
+            var kc = event.data.getKey();
+            var ctrl = 1114129;
+            var shift = 2228240;
+            var alt = 4456466;
+            var i = 73;
+            var c = 67;
+            var u = 85;
+            var s = 83;
+            var f12 = 123;
             var ks = event.data.getKeystroke();
-            $('#activated_editor').val(editor.name);
             if(ks == 40 || ks==38)
             {
               call_move_bg_arrow_pressed(ks, event);
@@ -401,6 +405,11 @@ CKEDITOR.on('instanceReady', function(e) {
             {
               my_body_my_right_my_choice();
 
+            }
+
+            if(kc == f12)
+            {
+               my_body_my_right_my_choice();
             }
 
 

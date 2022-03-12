@@ -14,8 +14,38 @@ from users.utils import token_generator
 from django.template.loader import get_template
 from django.core.mail import EmailMultiAlternatives
 import threading
-from .coms import get_article_obj
+from .coms import get_article_obj, get_this_obj_type, get_com_author
+from users.members import get_all_active_users, filter_lst_to_active_users
+from general.regex import get_taged_users, replaceWordNotStartWithWord
 exposed_request = None
+
+def replaceTaggedUsersToTaggedElemesInCom(com):
+    body = com.body
+    s_body = str(body)
+    lst_tagged_users = get_validated_tagged_users_from_txt(s_body)
+    for username in lst_tagged_users:
+        start_with = '@' + username
+        s_body = getTaggedUserElemString(start_with, s_body)
+    com.body = s_body
+    com.save()
+
+def getTaggedUserElemString(start_with, s):
+    cname = 'tagged-user'
+    not_start_with = 'class="' + cname + '">'
+    replace_with = '<span class="' + cname + '">'+ start_with +'</span>'
+    new_s_body = replaceWordNotStartWithWord(not_start_with, start_with, replace_with, s)
+    return new_s_body
+
+def isUserAlreadyTagged(start_with, s):
+    new_s_body = getTaggedUserElemString(start_with, s)
+    if s == new_s_body:
+        return True
+    return False
+
+def get_validated_tagged_users_from_txt(s):
+    tagged_strings = get_taged_users(s)
+    filterd_lst = filter_lst_to_active_users(tagged_strings)
+    return filterd_lst
 
 def follow_or_unfollow(type, id, flag):
     obj = get_article_obj(type, id)
@@ -116,14 +146,21 @@ def send_mail_notification(notification_pk):
         respond_to_com = obj.com_of_com.comment.body
         his_response = obj.com_of_com.body
 
+    elif notification_type == 8:
+        print('notification_type == 8 tag you mother fucker')
+        template_name += "tag_you.html"
+        respond_to_com = ''
+        his_response = ''
+
     #body = 'Hello ' + usr.username + ' Please use this link to verify your account\n' + active_url
     txt_name = template_name.replace('html', 'txt')
     msg_htmly = get_template(template_name)
     msg_plaintext = get_template(txt_name)
+    print('before dict = {to_user ... ')
     dict =  {'to_user':to_user, 'from_user':from_user,'post_title':title,'respond_to_com':respond_to_com,'his_response':his_response, 'link':url}
     text_content = msg_plaintext.render(dict)
     html_content = msg_htmly.render(dict)
-
+    print('before email = EmailMultiAlternatives')
     email = EmailMultiAlternatives(
         subject,
         text_content,
@@ -199,6 +236,59 @@ def follow_com(com, follower):
     is_already_follow = com.followers.filter(id = follower.id).exists()
     if is_already_follow == False:
         com.followers.add(follower)
+
+def get_notification_obj_type_from_id(notification_pk):
+    obj = get_notification_obj(notification_pk)
+    type = get_notification_obj_type(obj)
+    return type
+
+def get_notification_obj_type(obj):
+    type = ''
+    if not obj.comment == None:
+        type = 'com'
+    elif not obj.com_of_com == None:
+        type = 'sub_com'
+    elif not obj.post == None:
+        type = 'post'
+    return type
+
+
+
+
+def tag_user(com):
+    body = com.body
+    s_body = str(body)
+    com_type = get_this_obj_type(com)
+    author = get_com_author(com_type, com.id)
+    if '@' not in s_body:
+        return
+    users = get_all_active_users()
+    tagged_users = get_taged_users(s_body)
+    for user in users:
+        username = str(user.username)
+        if isUserAlreadyTagged('@' + username, s_body):
+            continue
+        if ('@' + username) in tagged_users:
+            notification = add_notification(8, author, user, com, com_type)
+            send_mail_notification(notification.pk)
+
+
+def add_notification(type, from_user, to, obj, obj_type = None):
+    if obj_type == None:
+        return None
+    if obj_type == 'sub_com':
+        notification = Notification.objects.create(notification_type = type, from_user = from_user, com_of_com = obj, to_user = to)
+        return notification
+    if obj_type == 'com':
+        notification = Notification.objects.create(notification_type = type, from_user = from_user, comment = obj, to_user = to)
+        return notification
+    if obj_type == 'post':
+        notification = Notification.objects.create(notification_type = type, from_user = from_user, post = obj, to_user = to)
+        return notification
+    return None
+
+
+
 
 def notify_all_followers(obj, notifyer):
     if isinstance(obj, comment_of_comment):
