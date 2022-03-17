@@ -140,7 +140,7 @@ class MagazineHome(ListView):
         context['most_relveant'] = BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished')[1:4]
         context['object_list'] = BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished')[4:8]
         num_of_main_posts = 8
-        min_num_of_posts = 6
+        min_num_of_posts = 7
         authors =  BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished').filter(Q(author__groups__name = 'admin') | Q(author__groups__name = 'owner')).values_list('author__id').annotate(total=Count('author__id')).distinct().order_by()
         authors_id = []
         #print(len(authors))
