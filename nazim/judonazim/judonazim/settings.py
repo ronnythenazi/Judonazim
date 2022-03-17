@@ -233,7 +233,6 @@ CKEDITOR_CONFIGS = {
     'default': {
         'width': '100%',
         'extraAllowedContent': 'iframe[*]',
-        #'height' : '100%',
     },
 
 }

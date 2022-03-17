@@ -259,6 +259,15 @@
   justify-content: flex-start;
   gap:0px;
 }
+.super-tiny-column-strecth-align
+{
+  display: flex;
+  justify-content: column;
+  direction: rtl;
+  align-items:stretch;
+  justify-content: flex-start;
+  gap:0px;
+}
 .tiny-row-start-align
 {
   display: flex;

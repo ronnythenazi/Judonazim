@@ -9,12 +9,16 @@
   {
     display:none !important;
   }
+  #richtext
+  {
+
+  }
 </style>
  {% if user.is_authenticated %}
 <form  method = "post"  enctype="multipart/form-data" style="width:100%;">
   {%csrf_token%}
   {{frm.media}}
-<div class="center">
+<div class="center" style="width:100%;">
 <div class="writepost" style="width:80%;">
 {{frm.author}}
 <div class="center" style="width:100%;">
@@ -42,13 +46,20 @@
 </div>
 
 <div class="center">
-<span>שתף כאן את דעותיך, ושנה את העולם</span>
+<div>שתף כאן את דעותיך, ושנה את העולם</div>
 {{frm.content}}
 
  <div class="submit-row">
  {{frm.publishstatus}}
  <button class="custom-btn drakula btn-loader btn-loader-small" type="submit" name="addpost">פרסם</button>
  </div>
+
+ <script>
+   CKEDITOR.replace( 'id_content', {
+    width: '1000px',
+    height:'1000px',
+});
+  </script>
 </div>
 
 
