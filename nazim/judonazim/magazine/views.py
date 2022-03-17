@@ -147,13 +147,13 @@ class MagazineHome(ListView):
         #print(authors)
         for author in authors:
             auhtor_count = author[1]
-            if (auhtor_count >= min_num_of_posts + num_of_main_posts):
+            if (auhtor_count > min_num_of_posts + num_of_main_posts):
                 authors_id.append(author[0])
         #print(authors_id)
 
-        context['author_posts'] = []
+        context['authors_posts'] = []
         for author_id in authors_id:
-            context['author_posts'].append(BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished').filter(author__id = author_id)[9:][:min_num_of_posts])
+            context['authors_posts'].append(BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished').filter(author__id = author_id)[num_of_main_posts + 1:][:min_num_of_posts])
         #content['author_pubs'] = BlogPost.objects.filter(publishstatus = 'public').order_by('-datepublished')[9:].order_by('author').annotate(authr_posts_num=Count('author', distinct=True)).filter(author__level__gte = 6)
 
         #print(context['authors_posts'][0][0]['pk'])
