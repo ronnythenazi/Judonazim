@@ -173,11 +173,11 @@
       </div>
 
       <div class="ice-cream-seperator-thick"></div>
-      <div class="articles-parent" style="margin-top:50px;width:100%;">
+      <div class="articles-parent" style="margin-top:50px;">
 
-        <a class="category-main-post" href="{%url 'magazine:anArticle' author_posts.0.pk %}"  style="flex-basis:1;flex-grow:1;">
-            <div class="category-main-post-img" style="align-items:center;width:100%;">
-              <img src="{{author_posts.0.thumb.url}}" alt="" style="width:100%;">
+        <a class="category-main-post" href="{%url 'magazine:anArticle' author_posts.0.pk %}"  style="align-items:center;">
+            <div class="category-main-post-img" style="align-items:center;">
+              <img src="{{author_posts.0.thumb.url}}" alt="">
               <div class="category-main-post-caption">
                  <div class="a-title" style="text-align: center;justify-content:center;align-items:flex-end;color:white;width:unset !important; max-width:unset;">{{author_posts.0.title | safe | slice:":100"}}</div>
                  {% if author_posts.0.author.profile.profile_img.url %}
@@ -197,7 +197,7 @@
            </div>
         </a>
 
-      <div class="articles-parent" style="width:100%;flex-basis:1;flex-grow:1;">
+      <div class="articles-parent" style="width:100%;">
           <div class="articles-block">
             <a class="article-block" href="{%url 'magazine:anArticle' author_posts.1.pk %}">
 
