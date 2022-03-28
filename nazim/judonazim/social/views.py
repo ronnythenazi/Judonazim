@@ -348,6 +348,7 @@ def ajax_notifications(request):
 
         except Exception as ex:
             print(ex)
+            return JsonResponse({"error": ""}, status=400)
         lst_next_notifications = []
         next_notifications = Notification.objects.filter(to_user = request.user.id).filter(date__gt = last_notification_date).exclude(user_has_seen = True).order_by('-date')
 
