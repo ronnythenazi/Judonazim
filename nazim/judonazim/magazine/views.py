@@ -11,9 +11,33 @@ from django.utils.dateparse import parse_datetime
 from datetime import datetime, timedelta
 from .dates import *
 from social.notifications import follow_post_by_sending_com, tag_user, replaceTaggedUsersToTaggedElemesInCom
+from users.members import activate_user, deactivate_user
+from social.members_permissions import f_is_user_owner
 import math
 
+def activate_user_ajax(request):
+    if not request.is_ajax or not request.method == "POST":
+        return JsonResponse({})
+    if not request.user.is_authenticated:
+        return JsonResponse({})
+    username = request.POST.get('username')
+    if f_is_user_owner() == False:
+        return JsonResponse({})
+    activate_user(username)
+    return JsonResponse({})
 
+
+
+def deactivate_user_ajax(request):
+    if not request.is_ajax or not request.method == "POST":
+        return JsonResponse({})
+    if not request.user.is_authenticated:
+        return JsonResponse({})
+    username = request.POST.get('username')
+    if f_is_user_owner() == False:
+        return JsonResponse({})
+    deactivate_user(username)
+    return JsonResponse({})
 
 @unauthenticated_user
 @allowed_users(allowed_roles = ['owner'])

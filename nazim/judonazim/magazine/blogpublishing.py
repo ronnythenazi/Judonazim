@@ -6,9 +6,9 @@ from django.contrib.auth.models import User, Group
 
 class UsrToGroupForm(forms.Form):
     users = Profile.objects.all() #User.objects.values_list('username', flat = True)
-    members = forms.ModelMultipleChoiceField(queryset = users, widget=forms.SelectMultiple(attrs={'class':'signfield'}))
+    members = forms.ModelMultipleChoiceField(queryset = users, widget=forms.SelectMultiple(attrs={'class':'signfield select-box'}))
     groups = Group.objects.all() #Group.objects.all('name', flat = True)
-    group = forms.ModelChoiceField(queryset=groups, widget=forms.Select(attrs={'class':'signfield'}))
+    group = forms.ModelChoiceField(queryset=groups, widget=forms.Select(attrs={'class':'signfield select-box'}))
 
 
 class BlogPostForm(forms.ModelForm):

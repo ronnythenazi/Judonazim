@@ -20,6 +20,16 @@
        {% include 'magazine/components/popups/com_delete_item.html' %}
   {% endif %}
 
+ {% if request.user.groups.all.0.name == 'owner' and comment_of_comment.comment_of_comment_usr.is_active  and not comment_of_comment.comment_of_comment_usr == request.user %}
+     {% include 'magazine/components/popups/deactivate_user.html' %}
+ {% endif %}
+
+ {% if request.user.groups.all.0.name == 'owner' and not comment_of_comment.comment_of_comment_usr.is_active and not comment_of_comment.comment_of_comment_usr == request.user %}
+     {% include 'magazine/components/popups/activate.html' %}
+ {% endif %}
+
+
+
 
 
   </div>

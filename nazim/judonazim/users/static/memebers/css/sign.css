@@ -16,6 +16,10 @@
   padding: 0;
   border-width: 5px;
 }
+.select-box.signfield
+{
+  height: 60px;
+}
 .ronny-style-field
 {
   box-shadow: inset 0px 0px 10px blue;

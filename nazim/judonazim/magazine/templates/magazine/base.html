@@ -234,7 +234,6 @@
 {% include 'magazine/components/popups/confirmation.html' %}
 {% include 'magazine/components/popups/popup_msg.html' %}
 {% include 'members/components/popups/tagged_user_suggestion_lst.html' %}
-
  {%include 'components/footer.html'%}
   <script type="text/javascript" src="{% static 'plugins/jquery.js' %}"> </script>
   <script type="text/javascript" src="{% static 'magazine/js/magazine.js' %}"> </script>
@@ -246,6 +245,7 @@
   <script type="text/javascript" src="{% static 'general/js/txt.js' %}"> </script>
   <script type="text/javascript" src="{% static 'general/js/ckeditors.js' %}"> </script>
   <script type="text/javascript" src="{% static 'memebers/js/profiles.js' %}"> </script>
+
 
 
 
@@ -503,6 +503,51 @@ function get_caret_y()
       }
     })
   }
+
+  function deactivate_user(user)
+  {
+    var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+    $.ajax({
+
+      type: 'POST',
+      url: "{% url 'magazine:deactivate_user' %}",
+      data: {'username':user,
+            'csrfmiddlewaretoken': csrftoken,
+      },
+      dataType: 'json',
+
+      success: function (response) {
+
+      },
+
+      error: function (response) {
+
+      }
+    });
+  }
+
+  function activate_user(user)
+  {
+    var csrftoken = $('[name="csrfmiddlewaretoken"]').val();
+    $.ajax({
+
+      type: 'POST',
+      url: "{% url 'magazine:activate_user' %}",
+      data: {'username':user,
+            'csrfmiddlewaretoken': csrftoken,
+      },
+      dataType: 'json',
+
+      success: function (response) {
+
+      },
+
+      error: function (response) {
+
+      }
+    });
+  }
+
   $(document).ready(function(){
   $('body>:not(#page-load, #page-load *)').addClass('not-page-load');
   $('body').css('opacity', '100%');

@@ -4,6 +4,16 @@ from django.shortcuts import redirect, get_object_or_404
 from django.contrib.auth.models import Group, Permission
 from magazine.models import Profile
 
+def deactivate_user(username):
+    user = User.objects.get(username = username)
+    user.is_active = False
+    user.save()
+
+def activate_user(username):
+    user = User.objects.get(username = username)
+    user.is_active = True
+    user.save()
+
 def get_all_active_usernames_start_with(query_s):
     users_list = User.objects.filter(username__startswith = query_s).filter(is_active = True).values_list('username',flat=True).order_by('username')
     return list(users_list)

@@ -39,6 +39,7 @@ $('.item.subitem').mouseleave(function(){
   $(this).find('.organ').first().find('.com-edit-popup').first().hide();
   $(this).find('.organ').first().find('.com-ctl-popup').first().css('visibility', 'hidden');
 });
+
 $('.edit-popup-item').click(function(){
 
    var com_ancestor = $(this).parents('.item').first();
@@ -46,6 +47,52 @@ $('.edit-popup-item').click(function(){
    $(btn_edit).parents('.comment-edit-parent').first().find('.display-view').hide();
    $(btn_edit).parents('.comment-edit-parent').first().find('.form-view').show();
 });
+
+$('.deactivate-popup-item').click(function(){
+   var com_ancestor = $(this).parents('.item').first();
+   var user = get_com_author(com_ancestor);
+   deactivate_user(user);
+   $(com_ancestor).find('.deactivate-popup-item').first().hide();
+   $(com_ancestor).find('.activate-popup-item').first().show();
+});
+
+$('.activate-popup-item').click(function(){
+   var com_ancestor = $(this).parents('.item').first();
+   var user = get_com_author(com_ancestor);
+   activate_user(user);
+   $(com_ancestor).find('.activate-popup-item').first().hide();
+   $(com_ancestor).find('.deactivate-popup-item').first().show();
+});
+
+function get_com_author(com)
+{
+   var com_type = com_or_subcom(com);
+   var username = '';
+   if(com_type == 'com')
+   {
+       username = $(com).find('.com-author').first().val();
+   }
+   if(com_type == 'sub_com')
+   {
+     username = $(com).find('.sub-com-author').first().val();
+   }
+   return username;
+
+}
+
+function com_or_subcom(com)
+{
+   var com_type = '';
+   if($(com).hasClass('comment'))
+   {
+     com_type = 'com';
+   }
+   else if($(com).hasClass('subitem'))
+   {
+     com_type = 'sub_com';
+   }
+   return com_type;
+}
 
 $('.btn-edit-save').click(function(){
   var com_ancestor = $(this).parents('.item').first();
@@ -84,6 +131,8 @@ $('.delete-popup-item').click(function(){
   $('body').append('<div id="darken-screen"></div>');
   $('#darken-screen').on('click', hide_confirm_popup);
 });
+
+
 
 $('body>*:not(#confirmation-box, #confirmation-box *)').click(function(){
   var hidden_status = $('#confirmation-box').css('display');

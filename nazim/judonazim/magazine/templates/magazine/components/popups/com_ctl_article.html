@@ -53,6 +53,14 @@
    {% endif %}
 
 
+   {% if request.user.groups.all.0.name == 'owner' and comment.comment_usr.is_active and not comment.comment_usr == request.user %}
+       {% include 'magazine/components/popups/deactivate_user.html' %}
+   {% endif %}
+
+   {% if request.user.groups.all.0.name == 'owner' and not comment.comment_usr.is_active and not comment.comment_usr == request.user %}
+       {% include 'magazine/components/popups/activate.html' %}
+   {% endif %}
+
 
    </div>
  </div>
