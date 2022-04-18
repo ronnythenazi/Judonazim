@@ -55,10 +55,38 @@
  </div>
 
  <script>
-    CKEDITOR.replace( 'id_content', {
+    /*CKEDITOR.replace( 'id_content', {
+    'toolbar': 'full',
+
+     'extraPlugins': 'justify,liststyle,indent',
      width: '1000px',
      height:'1000px',
      'extraAllowedContent': 'iframe[*]',
+ });*/
+
+ CKEDITOR.replace( 'id_content',  {
+         'toolbar': 'full',
+        'toolbar_full': [
+
+             ['Colordialog', 'Styles', 'Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
+             ['Autolink'],
+              ['Link', 'Unlink'],
+             ['Anchor',  'Uploadimage'],
+             ['Image', 'Flash', 'Table', 'HorizontalRule'],
+             ['TextColor', 'BGColor'],
+             ['Smiley', 'SpecialChar'], ['Source'],
+             ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
+             ['NumberedList','BulletedList'],
+             ['Indent','Outdent'],
+             ['Maximize'],
+             ['Preview'],
+             ['About'],
+         ],
+         'extraPlugins': 'justify,liststyle,indent',
+         width: '1000px',
+         height:'1000px',
+         'extraAllowedContent': 'iframe[*]',
+
  });
    </script>
 </div>

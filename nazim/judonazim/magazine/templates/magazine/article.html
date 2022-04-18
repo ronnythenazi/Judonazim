@@ -921,7 +921,7 @@ function update_total_coms_lbl()
              if( $('#page-load').length <= 0)
              {
 
-               $('body, html').animate({scrollTop:com_top - 200}, 1000);
+               $('body, html').animate({scrollTop:com_top - 250}, 1000);
 
                clearInterval(tiktok);
              }
@@ -942,7 +942,7 @@ function update_total_coms_lbl()
            if( $('#page-load').length <= 0)
            {
 
-             $('body, html').animate({scrollTop:sub_com_top - 200 }, 1000);
+             $('body, html').animate({scrollTop:sub_com_top - 250 }, 1000);
 
              clearInterval(tiktok2);
            }
@@ -977,7 +977,7 @@ $('.respond-to-who').click(function(){
    var selector = String($(this).attr('href'));
   $('html, body').animate(
     {
-     scrollTop: $(selector).offset().top - 100
+     scrollTop: $(selector).offset().top - 150
    },
    {duration:800,
    complete:function(){

@@ -212,24 +212,6 @@ else:
 
 
 #https://ronnythenazi.fra1.digitaloceanspaces.com
-"""
-CKEDITOR_CONFIGS = {
-   'default': {
-       'toolbar_Full': [
-            ['Styles', 'Format', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
-            ['Link', 'Unlink', 'Anchor'],
-            ['Image', 'Flash', 'Table', 'HorizontalRule'],
-            ['TextColor', 'BGColor'],
-            ['Smiley', 'SpecialChar'], ['Source'],
-            ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-            ['NumberedList','BulletedList'],
-            ['Indent','Outdent'],
-            ['Maximize'],
-        ],
-        'extraPlugins': 'justify,liststyle,indent',
-   },
-}
-"""
 
 """
 # your_app/settings.py
@@ -249,19 +231,6 @@ CKEDITOR_CONFIGS = {
 
 CKEDITOR_CONFIGS = {
     'default': {
-        'toolbar': 'Custom',
-        'toolbar__Custom': [
-     ['Styles', 'Format', 'Font', 'FontSize', 'Bold', 'Italic', 'Underline', 'Strike', 'SpellChecker', 'Undo', 'Redo'],
-     ['Link', 'Unlink', 'Anchor', 'Uploadimage'],
-     ['Image', 'Flash', 'Table', 'HorizontalRule'],
-     ['TextColor', 'BGColor'],
-     ['Smiley', 'SpecialChar'], ['Source'],
-     ['JustifyLeft','JustifyCenter','JustifyRight','JustifyBlock'],
-     ['NumberedList','BulletedList'],
-     ['Indent','Outdent'],
-     ['Maximize'],
-     ['Preview'],
- ],
         'width': '100%',
         'extraAllowedContent': 'iframe[*]',
     },
