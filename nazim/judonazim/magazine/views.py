@@ -14,6 +14,7 @@ from social.notifications import follow_post_by_sending_com, tag_user, replaceTa
 from users.members import activate_user, deactivate_user
 from social.members_permissions import f_is_user_owner
 from .articles import get_search_result, get_seach_result_qs_in_lst
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 import math
 
@@ -26,9 +27,9 @@ def load_more_matched_articles_ajax(request):
     lst = get_seach_result_qs_in_lst(search_results)
     return JsonResponse(lst, safe=False)
 
-
+@ensure_csrf_cookie
 def search_articles(request):
-    search = request.POST.get('search')
+    search = request.GET.get('search')
     search_results = get_search_result(search)
     context = {'posts': search_results, 'search':search}
     return render(request, 'magazine/posts_search_result.html', context)

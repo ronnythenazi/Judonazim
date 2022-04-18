@@ -259,6 +259,11 @@ function show_fan_if_there__is_more_results_waiting()
 <script>
   function is_at_the_bottom()
   {
+    if($('#animated-fan').hasClass('activated-animated-fan') == false)
+    {
+      $('#animated-fan').addClass('activated-animated-fan');
+    }
+
     var scrollHeight = $(document).height();
    var scrollPosition = $(window).height() + $(window).scrollTop();
     var bottom = 360;

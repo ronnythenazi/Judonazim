@@ -12,14 +12,14 @@
   animation-duration: 4s;
 
 }
-.curve-stick-item-right.curve-stick-item
+.activated-animated-fan .curve-stick-item-right.curve-stick-item
 {
   border-top: 2px solid rgba(0, 0, 0, .5);
   animation-name: rotate-right;
 
 
 }
-.curve-stick-item-left.curve-stick-item
+.activated-animated-fan .curve-stick-item-left.curve-stick-item
 {
   border-bottom: 2px solid #707070;
   animation-name: rotate-left;

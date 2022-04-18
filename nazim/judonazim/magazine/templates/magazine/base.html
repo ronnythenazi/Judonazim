@@ -212,7 +212,7 @@
    </div>
    </div>
  </div>
- <form method="post" class="nav-bar" style="justify-content:space-between;" action="{% url 'magazine:search-articles' %}">
+ <form method="GET"  action="{% url 'magazine:search-articles' %}" class="nav-bar" style="justify-content:space-between;">
    {% csrf_token %}
      <div></div>
      <div class="search-bar">
@@ -451,7 +451,7 @@ function get_caret_y()
 
 
 
-{% csrf_token %}
+
 <script>
   function get_user_list_suggestion_to_tag(s_query)
   {
@@ -669,7 +669,7 @@ function get_caret_y()
    }, 15);
   }
    setInterval(check_notficiations, 10000);
-   setInterval(is_at_the_bottom, 5000);
+   //setInterval(is_at_the_bottom, 5000);
    //create_fan_loader();
   });
 
@@ -688,6 +688,7 @@ function expose_page()
       $('body>*').removeClass('not-page-load');
        $('#page-load').remove();
        $('body, html').animate({scrollTop:300}, 100).animate({scrollTop:0}, 100);
+       setInterval(is_at_the_bottom, 5000);     
        }
    });
 
