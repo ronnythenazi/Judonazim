@@ -30,6 +30,17 @@
   top:0;
   right: 0;
 }
+.banned
+{
+  text-decoration-color: black;
+  text-decoration-line: line-through;
+  text-decoration-style:double;
+  opacity: 0.5;
+}
+.banned-user-label
+{
+
+}
 
 .popup-msg-list-row-item>img
 {

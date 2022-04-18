@@ -192,7 +192,10 @@
               {%endif%}
             </span>
             {% if comment.comment_usr %}
-            <b style="margin-right:-10px;" class="author author-comment tiny-row-center-align"><span>{{comment.comment_usr}}</span> <span>הגיב:</span></b>
+            <b style="margin-right:-10px;gap:2px;" class="author author-comment tiny-row-center-align">
+              <span class="user-com-label com-label" is_active="{{ comment.comment_usr.is_active }}">{{comment.comment_usr}}</span>
+              <span class="com-label">הגיב:</span>
+            </b>
             {% else %}
             <b style="margin-right:-10px;" class="author author-comment tiny-row-center-align">פלוני הגיב</b>
             {%  endif %}
@@ -350,29 +353,75 @@
               {% if comment_of_comment.to_sub_comment  %}
                   {% if comment_of_comment.comment_of_comment_usr %}
                      {% if comment_of_comment.to_sub_comment.comment_of_comment_usr %}
-                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">{{comment_of_comment.comment_of_comment_usr}} הגיב ל {{ comment_of_comment.to_sub_comment.comment_of_comment_usr }}</a>
+                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px; gap:2px;" class="author author-sub-comment respond-to-who">
+                      <span class="user-com-label com-label" is_active="{{ comment_of_comment.comment_of_comment_usr.is_active }}">
+                         {{comment_of_comment.comment_of_comment_usr}}
+                       </span>
+                      <span class="com-label">הגיב ל</span>
+                      <span class="user-com-label com-label" is_active="{{ comment_of_comment.to_sub_comment.comment_of_comment_usr.is_active }}">
+                         {{ comment_of_comment.to_sub_comment.comment_of_comment_usr }}
+                      </span>
+                      </a>
                      {% else %}
-                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who"> הגיב ל פלוני {{comment_of_comment.comment_of_comment_usr}}</a>
+                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                      <span class="user-com-label com-label" is_active="{{ comment_of_comment.comment_of_comment_usr.is_active }}">
+                        {{comment_of_comment.comment_of_comment_usr}}
+                      </span>
+                      <span class="com-label">הגיב ל</span>
+                      <span class="com-label">פלוני</span>
+                     </a>
                      {% endif %}
                   {% else %}
                      {% if comment_of_comment.to_sub_comment.comment_of_comment_usr %}
-                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">{{ comment_of_comment.to_sub_comment.comment_of_comment_usr }} פלוני הגיב ל </a>
+                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                        <span class="com-label">פלוני</span>
+                        <span class="com-label">הגיב ל</span>
+                          <span class="user-com-label com-label" is_active="{{ comment_of_comment.to_sub_comment.comment_of_comment_usr.is_active }}">
+                            {{ comment_of_comment.to_sub_comment.comment_of_comment_usr }}
+                         </span>
+                       </a>
                      {% else %}
-                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">פלוני הגיב ל פלוני</a>
+                     <a href="#sub-comment{{ comment_of_comment.to_sub_comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                    <span class="com-label">פלוני</span>
+                    <span class="com-label">הגיב ל</span>
+                    <span class="com-label">פלוני</span>
+                     </a>
                      {% endif %}
                 {% endif %}
               {% else %}
                  {% if comment_of_comment.comment_of_comment_usr %}
                    {% if comment.comment_usr %}
-                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">{{comment_of_comment.comment_of_comment_usr}} הגיב ל {{ comment.comment_usr }}</a>
+                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                     <span class="user-com-label com-label" is_active="{{ comment_of_comment.comment_of_comment_usr.is_active }}">{{comment_of_comment.comment_of_comment_usr}}</span>
+                     <span class="com-label">הגיב ל</span>
+                     <span class="user-com-label com-label" is_active="{{ comment.comment_usr.is_active }}">
+                       {{ comment.comment_usr }}
+                     </span>
+                    </a>
                    {% else %}
-                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">{{comment_of_comment.comment_of_comment_usr}} פלוני הגיב ל  </a>
+                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                     <span class="com-label">פלוני</span>
+                     <span class="com-label">הגיב ל</span>
+                     <span class="user-com-label com-label" is_active="{{ comment_of_comment.comment_of_comment_usr.is_active }}">
+                       {{comment_of_comment.comment_of_comment_usr}}
+                     </span>
+                    </a>
                    {% endif %}
                  {% else %}
                    {% if comment.comment_usr %}
-                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who"> פלוני הגיב ל {{ comment.comment_usr }}</a>
+                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                     <span class="com-label">פלוני</span>
+                     <span class="com-label">הגיב ל</span>
+                    <span class="user-com-label com-label" is_active="{{ omment.comment_usr.is_active }}">
+                      {{ comment.comment_usr }}
+                    </span>
+                   </a>
                    {% else %}
-                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;" class="author author-sub-comment respond-to-who">פלוני הגיב לפלוני</a>
+                   <a href="#comment{{ comment.pk }}" style="margin-right:-10px;gap:2px;" class="author author-sub-comment respond-to-who">
+                     <span>פלוני</span>
+                     <span class="com-label">הגיב ל</span>
+                     <span>פלוני</span>
+                   </a>
                    {% endif %}
                 {% endif %}
             {% endif %}
@@ -906,6 +955,7 @@ function update_total_coms_lbl()
       setInterval(check_post_rating, 10000);
       setInterval(check_com_rating, 30000);
       setInterval(check_sub_com_rating, 60000);
+      mark_banned_users();
     });
 
   function f_display_or_hide_sub_com()

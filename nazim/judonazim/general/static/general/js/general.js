@@ -8,6 +8,15 @@ function is_elem_exists(selector)
   return true;
 }
 
+function is_attr_exist(selector, name)
+{
+  var attr = $(selector).attr(name);
+  if (typeof attr !== 'undefined' && attr !== false)
+  {
+      return true;
+  }
+  return false;
+}
 
 function is_elem_displayed(selector)
 {
