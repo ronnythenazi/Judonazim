@@ -15,6 +15,7 @@
     <link rel="stylesheet" href="{% static 'magazine/css/article.css' %}">
     <link rel="stylesheet" href="{% static 'magazine/css/global.css' %}">
     <link rel="stylesheet" href="{% static 'general/css/general.css' %}">
+    <link rel="stylesheet" href="{% static 'general/css/animated.css' %}">
     {%block moreLinks%} {%endblock moreLinks%}
 
 <!--<script>
@@ -82,6 +83,8 @@
        </span>
      </div>
 
+<!-- uga-buga-->
+<div class="main-menu">
      <div class="menu">
 
 
@@ -209,6 +212,18 @@
    </div>
    </div>
  </div>
+ <form method="post" class="nav-bar" style="justify-content:space-between;" action="{% url 'magazine:search-articles' %}">
+   {% csrf_token %}
+     <div></div>
+     <div class="search-bar">
+       <input type="text" name="search" class="serach-txt" placeholder="חיפוש...">
+       <button class="seacrh-btn" type="submit">
+         {% include 'magazine/components/svg/search.svg' %}
+       </button>
+     </div>
+ </form>
+</div>
+ <!-- end uga buga -->
 
 
 
@@ -231,6 +246,7 @@
 <input type="hidden" id="caret-y" value="-1">
 <input type="hidden" id="activated_editor" value="">
 </div>
+
 {% include 'magazine/components/popups/confirmation.html' %}
 {% include 'magazine/components/popups/popup_msg.html' %}
 {% include 'members/components/popups/tagged_user_suggestion_lst.html' %}
@@ -245,6 +261,7 @@
   <script type="text/javascript" src="{% static 'general/js/txt.js' %}"> </script>
   <script type="text/javascript" src="{% static 'general/js/ckeditors.js' %}"> </script>
   <script type="text/javascript" src="{% static 'memebers/js/profiles.js' %}"> </script>
+  <script type="text/javascript" src="{% static 'general/js/effects.js' %}"> </script>
 
 
 
@@ -652,6 +669,8 @@ function get_caret_y()
    }, 15);
   }
    setInterval(check_notficiations, 10000);
+   setInterval(is_at_the_bottom, 5000);
+   //create_fan_loader();
   });
 
 

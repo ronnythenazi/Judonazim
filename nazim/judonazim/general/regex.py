@@ -10,8 +10,8 @@ def get_words(start_with="", string=""):
     return lst
 
 
-#def get_pattern_of_word():
-    #return '\w+'
+def is_str_start_with_substr(s, sub_s):
+    return s.startswith(sub_s)
 
 
 def getNotStartWith_pattern(not_start_with):

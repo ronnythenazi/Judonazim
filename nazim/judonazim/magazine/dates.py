@@ -3,6 +3,11 @@ from django.utils.dateparse import parse_datetime
 import datetime
 from dateutil import relativedelta
 
+
+
+def omit_time_from_datetime(date_with_time):
+    return date_with_time.date()
+
 def get_first_date_str():
     return date_to_format_str(BlogPost.objects.values_list('datepublished', flat = True).order_by('datepublished')[0])
 

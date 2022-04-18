@@ -28,6 +28,8 @@ urlpatterns = [
  path('about-ronny-the-nazi/', views.about_ronny_the_nazi , name="about_ronny_the_nazi"),
  path('login/', login_view, name = 'login'),
  path('deactivate_user/', views.deactivate_user_ajax, name='deactivate_user'),
- path('activate_user/', views.activate_user_ajax, name='activate_user')
+ path('activate_user/', views.activate_user_ajax, name='activate_user'),
+ path('search-results-articles/', views.search_articles, name='search-articles'),
+ path('load-more-matched-articles/', views.load_more_matched_articles_ajax, name='load-more-matched-articles'),
 
 ]

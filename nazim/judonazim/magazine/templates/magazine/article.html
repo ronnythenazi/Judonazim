@@ -50,12 +50,12 @@
        <span class="posttitle shiny-blue-clr post-title-slug" style="font-family:formal3-bold;color:black !important;opacity:0.9;font-size:3.5rem;">{{ object.title }}  </span>
      <div id="rate-post-form" class="tiny-row-center-align" style="justify-content:center;">
        {% if object.author.profile.profile_img.url %}
-           <a class="author big tiny-row-center-align"> <img class="tiny-avatar" src="{{object.author.profile.profile_img.url}}"/>  <span> {{object.author | safe}}</span> &nbsp; | &nbsp;
-                <span>{{object.datepublished | date:'d/m/Y' | safe}}</span>
+           <a class="author big tiny-row-center-align"> <img class="tiny-avatar" src="{{object.author.profile.profile_img.url}}"/>  <span class="author-crawl"> {{object.author | safe}}</span> &nbsp; | &nbsp;
+                <span class="date-crawl">{{object.datepublished | date:'d/m/Y' | safe}}</span>
            </a>
        {% else %}
-       <a class="author big tiny-row-end-align"> {% include 'members/default_profile_img.html' %}  <span>  {{object.author | safe}}</span> &nbsp; | &nbsp;
-            <span>{{object.datepublished | date:'d/m/Y' | safe}}</span>
+       <a class="author big tiny-row-end-align"> {% include 'members/default_profile_img.html' %}  <span class="author-crawl">  {{object.author | safe}}</span> &nbsp; | &nbsp;
+            <span class="date-crawl">{{object.datepublished | date:'d/m/Y' | safe}}</span>
        </a>
        {% endif %}
        {% if user.is_authenticated %}

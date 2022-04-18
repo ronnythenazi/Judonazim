@@ -2,7 +2,7 @@ from django.shortcuts import render, get_object_or_404, HttpResponseRedirect, Ht
 from django.views.generic import ListView, DetailView , CreateView
 from .models import BlogPost, Profile, Comment, Notification, comment_of_comment
 from django.urls import reverse
-from django.http import HttpResponse, HttpResponseRedirect
+from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from .blogpublishing import *
 from django.forms import modelformset_factory
 from .decorations import unauthenticated_user, allowed_users, check_if_post_accessible, check_if_post_and_comment_accessible
@@ -13,7 +13,25 @@ from .dates import *
 from social.notifications import follow_post_by_sending_com, tag_user, replaceTaggedUsersToTaggedElemesInCom
 from users.members import activate_user, deactivate_user
 from social.members_permissions import f_is_user_owner
+from .articles import get_search_result, get_seach_result_qs_in_lst
+
 import math
+
+def load_more_matched_articles_ajax(request):
+    if not request.is_ajax or not request.method == "GET":
+        return JsonResponse({})
+    search = request.GET.get('search')
+    from_post = request.GET.get('num_of_posts_loaded')
+    search_results = get_search_result(search, start_from=int(from_post), max_per_page=10)
+    lst = get_seach_result_qs_in_lst(search_results)
+    return JsonResponse(lst, safe=False)
+
+
+def search_articles(request):
+    search = request.POST.get('search')
+    search_results = get_search_result(search)
+    context = {'posts': search_results, 'search':search}
+    return render(request, 'magazine/posts_search_result.html', context)
 
 def activate_user_ajax(request):
     if not request.is_ajax or not request.method == "POST":
@@ -25,7 +43,6 @@ def activate_user_ajax(request):
         return JsonResponse({})
     activate_user(username)
     return JsonResponse({})
-
 
 
 def deactivate_user_ajax(request):
