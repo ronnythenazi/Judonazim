@@ -25,11 +25,18 @@ def is_url_startswith_article_path(url):
 
 def get_article_path():
     homepage_url = get_homepage_path()
-    path = homepage_url + '/' + get_article_rel_path()
+    path = homepage_url  + get_article_page_name() + '/'
     return path
 
+
 def get_article_rel_path():
-    return 'anArticle'
+    homepage_url = get_homepage_rel_path()
+    path = homepage_url  + get_article_page_name() + '/'
+    return path
+
+def get_article_page_name():
+    return 'article'
+
 
 def get_homepage_rel_path():
     rel_path = reverse('magazine:magazineNews')

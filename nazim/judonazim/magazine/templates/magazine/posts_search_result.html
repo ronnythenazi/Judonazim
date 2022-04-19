@@ -121,8 +121,7 @@
   <div class="all-posts-view">
   {% for post in posts %}
     <a class="equal-cols-height-row search-item"  href="{%url 'magazine:anArticle' post.pk %}">
-         <img class="side-thumb" src="{{post.thumb.url}}" alt="">
-
+         <img style="opacity:0;" class="side-thumb" id="search-result-thumb{{ forloop.counter }}" onload="fadeInImg('search-result-thumb{{ forloop.counter }}')" src="{{post.thumb.url}}" alt="">
       <div class="article-txt">
          <div class="side-title">{{post.title | safe | slice:":100"}}</div>
          <div class="a-subtitle" style="justify-content:flex-start;">{{post.subtitle | safe | slice:":100"}}</div>
@@ -174,16 +173,22 @@
 
 <script>
 
-function clone_search_result(thumb, title, subtitle, avatar, author, date_)
+function clone_search_result(thumb, title, subtitle, avatar, author, date_ , href)
 {
   var elem_to_clone = $('.search-item').last();
+  var num_of_items = $('.search-item').length + 1;
+  var id = "search-result-thumb" + num_of_items;
+
   var cloned = $(elem_to_clone).clone(true);
   $(cloned).find('.side-thumb').attr('src', thumb);
+  $(cloned).find('.side-thumb').attr('onload', "fadeInImg('"+ id +"')");
+  $(cloned).find('.side-thumb').attr('id', id);
   $(cloned).find('.side-title').text(title);
   $(cloned).find('.a-subtitle').text(subtitle);
   $(cloned).find('.very-tiny-avatar').attr('src', avatar);
   $(cloned).find('.author-search').text(author);
   $(cloned).find('.date-search').text(date_);
+  $(cloned).attr('href', href);
   $(elem_to_clone).after(cloned);
 }
 
@@ -195,7 +200,8 @@ function call_clone_search_result(obj)
   var date_ = obj['date_'];
   var avatar = obj['avatar'];
   var author = obj['author'];
-  clone_search_result(thumb, title, subtitle, avatar, author, date_);
+  var href = obj['href'];
+  clone_search_result(thumb, title, subtitle, avatar, author, date_ , href);
 }
 
 </script>
