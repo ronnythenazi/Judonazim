@@ -22,6 +22,12 @@ def f_is_user_owner():
         return True
     return False
 
+def is_user_owner(user):
+    groups = list(user.groups.values_list('name',flat = True))
+    if "owner" in groups:
+        return True
+    return False
+
 def f_is_user_author(com_type, com_id):
     author = get_com_author(com_type, com_id)
     if exposed_request.user == author:

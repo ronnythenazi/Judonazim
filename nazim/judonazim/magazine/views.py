@@ -327,12 +327,13 @@ def Article(request, pk, pos_id = '#start'):
 @allowed_users(allowed_roles = ['owner', 'admin'])
 def fUpdateRecord(request, id):
     obj = get_object_or_404(BlogPost, id = id)
+    prev_publish_status = obj.publishstatus
     frm = BlogPostForm(request.POST or None, request.FILES or None, instance = obj)
     if(request.method == 'POST'):
         if frm.is_valid():
             if 'btnSave' in request.POST:
                 post_obj = frm.save()
-                to_notify_users_for_new_post(request.user, post_obj, obj.publishstatus)
+                to_notify_users_for_new_post(request.user, post_obj, prev_publish_status)
             elif 'btndelete' in request.POST:
                 obj.delete()
             return redirect('magazine:magazineNews')
