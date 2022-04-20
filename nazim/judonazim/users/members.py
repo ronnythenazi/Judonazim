@@ -26,6 +26,10 @@ def get_all_active_usernames():
     users_list = User.objects.filter(is_active = True).values_list('username',flat=True).order_by('username')
     return list(users_list)
 
+def get_all_active_usernames_unsorted():
+    users_list = User.objects.filter(is_active = True).values_list('username',flat=True)
+    return list(users_list)
+
 def get_user(username):
     user = User.objects.get(username = username)
     return user

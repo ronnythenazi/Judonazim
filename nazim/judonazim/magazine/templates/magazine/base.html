@@ -688,7 +688,7 @@ function expose_page()
       $('body>*').removeClass('not-page-load');
        $('#page-load').remove();
        $('body, html').animate({scrollTop:300}, 100).animate({scrollTop:0}, 100);
-       setInterval(is_at_the_bottom, 5000);     
+       setInterval(is_at_the_bottom, 5000);
        }
    });
 
@@ -790,6 +790,12 @@ function expose_page()
         else if(String(next_notification["notification_type"]) == "4")
         {
           msg= " נתן לך דיסלייק למאמר ";
+          var elem = build_notification_object(from_user_id , msg, next_notification["notification_type"], from_user, 'post-notification', notification_pk, next_notification['post']);
+        //  $(parent).prepend(elem);
+        }
+        else if(String(next_notification["notification_type"]) == "9")
+        {
+          msg= " פרסם מאמר חדש ";
           var elem = build_notification_object(from_user_id , msg, next_notification["notification_type"], from_user, 'post-notification', notification_pk, next_notification['post']);
         //  $(parent).prepend(elem);
         }

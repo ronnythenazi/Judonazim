@@ -16,7 +16,6 @@ def get_seach_result_qs_in_lst(qs):
     lst = []
     for item in qs:
         id = item.id
-
         href = get_article_rel_path() + str(id)
         title = str(item.title)
         subtitle = str(item.subtitle)

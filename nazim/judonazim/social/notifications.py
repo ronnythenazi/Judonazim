@@ -110,6 +110,10 @@ def send_mail_notification(notification_pk):
         template_name += "dislike_your_post.html"
         respond_to_com = ''
         his_response = ''
+    elif notification_type == 9 and com_or_sub_com == 'post':
+        template_name += "new_post.html"
+        respond_to_com = ''
+        his_response = ''
 
     elif notification_type == 1 and com_or_sub_com == 'com':
         template_name += "like_your_com.html"
@@ -156,7 +160,6 @@ def send_mail_notification(notification_pk):
     txt_name = template_name.replace('html', 'txt')
     msg_htmly = get_template(template_name)
     msg_plaintext = get_template(txt_name)
-    print('before dict = {to_user ... ')
     dict =  {'to_user':to_user, 'from_user':from_user,'post_title':title,'respond_to_com':respond_to_com,'his_response':his_response, 'link':url}
     text_content = msg_plaintext.render(dict)
     html_content = msg_htmly.render(dict)
@@ -272,6 +275,12 @@ def tag_user(com):
             notification = add_notification(8, author, user, com, com_type)
             send_mail_notification(notification.pk)
 
+def notify_users_for_new_post(from_user, post):
+    curr_user = from_user
+    recipents = get_all_active_users()
+    for recipent in recipents:
+        notification = add_notification(9, from_user, recipent, post, 'post')
+        send_mail_notification(notification.pk)
 
 def add_notification(type, from_user, to, obj, obj_type = None):
     if obj_type == None:

@@ -10,11 +10,14 @@ from django.db.models import Count, Q
 from django.utils.dateparse import parse_datetime
 from datetime import datetime, timedelta
 from .dates import *
-from social.notifications import follow_post_by_sending_com, tag_user, replaceTaggedUsersToTaggedElemesInCom
+from social.notifications import (follow_post_by_sending_com,
+tag_user, replaceTaggedUsersToTaggedElemesInCom, notify_users_for_new_post)
+
 from users.members import activate_user, deactivate_user
 from social.members_permissions import f_is_user_owner
 from .articles import get_search_result, get_seach_result_qs_in_lst
 from django.views.decorators.csrf import ensure_csrf_cookie
+
 
 import math
 
@@ -328,7 +331,8 @@ def fUpdateRecord(request, id):
     if(request.method == 'POST'):
         if frm.is_valid():
             if 'btnSave' in request.POST:
-                frm.save()
+                post_obj = frm.save()
+                to_notify_users_for_new_post(request.user, post_obj, obj.publishstatus)
             elif 'btndelete' in request.POST:
                 obj.delete()
             return redirect('magazine:magazineNews')
@@ -364,7 +368,8 @@ def fwriteblog(request):
     if request.method == 'POST':
         frm = BlogPostForm(request.POST, request.FILES)
         if frm.is_valid():
-            frm.save()
+            post_obj = frm.save()
+            to_notify_users_for_new_post(request.user, post_obj)
             return redirect('magazine:magazineNews')
 
     frm = BlogPostForm()
@@ -372,3 +377,11 @@ def fwriteblog(request):
     'frm':frm
     }
     return render(request, 'magazine/writepost.html', context)
+
+def to_notify_users_for_new_post(user, post, prev_publish_status=None):
+    publishstatus = post.publishstatus
+    if(publishstatus == 'private'):
+        return
+    if(prev_publish_status == 'public'):
+        return
+    notify_users_for_new_post(user, post)
