@@ -1,4 +1,4 @@
-[type = text]:not(.serach-bar [type = text])
+[type = text]:not(.serach-txt)
 {
   border-radius: 10px;
   text-align: center;
