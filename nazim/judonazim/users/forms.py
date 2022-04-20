@@ -23,7 +23,18 @@ class SignInFrm(forms.ModelForm):
     def clean(self):
         username = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
-        user = authenticate(username=username, password=password)
+
+
+        user=None
+
+
+        try:
+            user_obj = User.objects.filter(email=username)[0]
+            username2 = user_obj.username
+            user = authenticate(username=username2, password=password)
+        except:
+            user = authenticate(username=username, password=password)
+
         #if not user or not user.is_active:
         #    raise forms.ValidationError("מצטער, שם משתמש או סיסמה אינם נכונים, נסה שוב")
         if not user:
@@ -69,6 +80,10 @@ class SignUpFrm(forms.ModelForm):
         username_qs = User.objects.filter(username = username)
         if username_qs.exists():
             raise forms.ValidationError("השם משתמש שבחרת תפוס")
+
+        elif '@' in str(username):
+             raise forms.ValidationError("אסור @ בשם משתמש")
+
         return self.data['username']
 
     def clean_password2(self):
@@ -76,8 +91,10 @@ class SignUpFrm(forms.ModelForm):
         password2 = self.cleaned_data.get('password2')
         if password != password2:
             raise forms.ValidationError("סיסמה שהזנת לצורך אימות שונה מהסיסמה שהזנת בשדה מעל")
+        elif len(str(password)) < 8:
+            raise forms.ValidationError("סיסמא חייבת להכיל לפחות 8 תוים")
 
-        return self.data['email']
+        return self.data['password']
 
 
 
@@ -88,13 +105,14 @@ class SignUpFrm(forms.ModelForm):
 
 
 class UsrUpdateFrm(UserChangeForm):
-    email = forms.EmailField(required=False, widget = forms.EmailInput(attrs = {'class':'signfield'}))
+    #email = forms.EmailField(required=False, widget = forms.EmailInput(attrs = {'class':'signfield'}))
     first_name = forms.CharField(required=False, max_length = 100, widget = forms.TextInput(attrs = {'class':'signfield'}))
     last_name = forms.CharField(required=False, max_length = 100, widget = forms.TextInput(attrs = {'class':'signfield'}))
 
     class Meta:
         model = User
-        fields = ['username', 'first_name', 'last_name', 'email']
+        #fields = ['username', 'first_name', 'last_name', 'email']
+        fields = ['username', 'first_name', 'last_name']
 
     def __init__(self, *args, **kwargs):
         super(UsrUpdateFrm, self).__init__(*args, **kwargs)
@@ -105,9 +123,20 @@ class UsrUpdateFrm(UserChangeForm):
         self.fields['username'].label ="שם משתמש"
         #self.fields['password1'].label ="סיסמה"
         #self.fields['password2'].label ="הזן סיסמה שוב"
-        self.fields['email'].label ="מייל/דואר אלקטרוני"
+        #self.fields['email'].label ="מייל/דואר אלקטרוני"
         self.fields['first_name'].label ="שם"
         self.fields['last_name'].label ="כינוי"
+
+    def clean_username(self):
+        username = self.cleaned_data.get('username')
+        username_qs = User.objects.filter(username = username)
+        if username_qs.exists():
+            raise forms.ValidationError("השם משתמש שבחרת תפוס")
+
+        elif '@' in str(username):
+             raise forms.ValidationError("אסור @ בשם משתמש")
+
+        return self.data['username']
 
 
 class UpdatePasswordFrm(PasswordChangeForm):
@@ -123,3 +152,13 @@ class UpdatePasswordFrm(PasswordChangeForm):
         self.fields['old_password'].label = "סיסמה נוכחית"
         self.fields['new_password1'].label ="סיסמה חדשה"
         self.fields['new_password2'].label = "סיסמה חדשה שוב"
+
+    def clean_new_password2(self):
+        password = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password != password2:
+            raise forms.ValidationError("סיסמה שהזנת לצורך אימות שונה מהסיסמה שהזנת בשדה מעל")
+        elif len(str(password)) < 8:
+            raise forms.ValidationError("סיסמא חייבת להכיל לפחות 8 תוים")
+
+        return self.data['new_password2']

@@ -17,7 +17,7 @@
 </style>
 <form  method = "post"  enctype="multipart/form-data" style="width:100%;">
   {%csrf_token%}
-
+{{ form.non_field_errors }}
 <div class="center">
 <div class="writepost" style="width:80%;font-size:1rem !important;">
 
@@ -26,6 +26,7 @@
 <div class="center" style="gap:50px;">
 <div class="center" style="width:100%;">
 
+<span style="color:red;">  {{ form.username.errors }}</span>
 <div class="signfieldrow">
   <span class="label ice-cream-clr">שם משתמש</span>
   <span class="super-tiny-row-center-align ronny-style-field">
@@ -40,7 +41,7 @@
 
 
 
-<div class="center" style="width:100%;">
+<!--<div class="center" style="width:100%;">
 <div class="signfieldrow">
   <span class="label ice-cream-clr">דואר אלקטרוני</span>
   <span class="super-tiny-row-center-align ronny-style-field">
@@ -50,7 +51,7 @@
   {{form.email}}
   </span>
 </div>
-</div>
+</div>-->
 
 <div class="center" style="width:100%;">
 <div class="signfieldrow">

@@ -19,6 +19,7 @@ from django.contrib.sites.shortcuts import get_current_site
 from .utils import token_generator
 from django.template.loader import get_template
 from django.template import Context
+from .members import is_username_active
 
 from django.views import View
 
@@ -39,15 +40,25 @@ def login_view(request):
     if request.method == 'POST':
         if not form.is_valid():  # Here
             return render(request, 'users/signin.html', {'form': form})
-        username = request.POST['username']
+        username_input = request.POST['username']
         password = request.POST['password']
-        user = authenticate(username=username, password=password)
-        if user is not None:
-            if user.is_active:
-                login(request, user)
-                return redirect('magazine:magazineNews')
+        #user = authenticate(username=username, password=password)
+        #if is_username_active(username):
+        username = None
+        print('active mother cucker')
+        try:
+            user_obj = User.objects.filter(email=username_input)[0]
+            username = user_obj.username
+            user = authenticate(username=username, password=password)
+        except:
+            username = username_input
+            user = authenticate(username=username, password=password)
 
+        if is_username_active(username):
+            login(request, user)
+            return redirect('magazine:magazineNews')
         return HttpResponseRedirect("/SignIn")
+
     else:
         return render(request, 'users/signin.html', {'form': form})
 
