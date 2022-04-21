@@ -93,3 +93,18 @@
   font-size: 1.2rem;
   width:170px;
 }
+
+.forget-password-link
+{
+  opacity:0.5;
+  text-decoration:unset;
+  font-size: 1rem;
+  color:blue;
+  font-family:sans-serif;
+  filter: drop-shadow(1px 1px 5px black);
+  transition: 0.2s all;
+}
+.forget-password-link:hover
+{
+  color:green;
+}

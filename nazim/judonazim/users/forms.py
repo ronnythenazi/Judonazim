@@ -98,6 +98,29 @@ class SignUpFrm(forms.ModelForm):
 
 
 
+class mail_for_password_recovery_frm(forms.Form):
+
+    email = forms.EmailField(required=True, widget = forms.EmailInput(attrs = {'class':'signfield'}))
+
+
+    def clean_email(self):
+        email_qs = User.objects.filter(email = self.data['email'])
+        if not email_qs.exists():
+            raise forms.ValidationError("המייל שבחרת לא קיים במערכת")
+        if not email_qs[0].is_active:
+            raise forms.ValidationError("מייל זה שייך למשתמש שחשבונו הושבת")
+        return self.data['email']
+
+
+    def clean_password2(self):
+        password = self.cleaned_data.get('password')
+        password2 = self.cleaned_data.get('password2')
+        if password != password2:
+            raise forms.ValidationError("סיסמה שהזנת לצורך אימות שונה מהסיסמה שהזנת בשדה מעל")
+        elif len(str(password)) < 8:
+            raise forms.ValidationError("סיסמא חייבת להכיל לפחות 8 תוים")
+
+        return self.data['password']
 
 
 
@@ -137,6 +160,25 @@ class UsrUpdateFrm(UserChangeForm):
              raise forms.ValidationError("אסור @ בשם משתמש")
 
         return self.data['username']
+
+class CreatePasswordFrm(forms.Form):
+    new_password1 = forms.CharField(required=False, max_length = 100, widget = forms.PasswordInput(attrs = {'class':'signfield', 'type' : 'password'}))
+    new_password2 = forms.CharField(required=False, max_length = 100, widget = forms.PasswordInput(attrs = {'class':'signfield', 'type' : 'password'}))
+
+    def __init__(self, *args, **kwargs):
+        super(CreatePasswordFrm, self).__init__(*args, **kwargs)
+        self.fields['new_password1'].label ="סיסמה חדשה"
+        self.fields['new_password2'].label = "סיסמה חדשה שוב"
+
+    def clean_new_password2(self):
+        password = self.cleaned_data.get('new_password1')
+        password2 = self.cleaned_data.get('new_password2')
+        if password != password2:
+            raise forms.ValidationError("סיסמה שהזנת לצורך אימות שונה מהסיסמה שהזנת בשדה מעל")
+        elif len(str(password)) < 8:
+            raise forms.ValidationError("סיסמא חייבת להכיל לפחות 8 תוים")
+
+        return self.data['new_password2']
 
 
 class UpdatePasswordFrm(PasswordChangeForm):

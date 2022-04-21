@@ -3,7 +3,8 @@ from django.views import generic
 from django.contrib.auth.forms import UserCreationForm, UserChangeForm, PasswordChangeForm
 from django.contrib.auth.views import PasswordChangeView
 from django.urls import reverse_lazy, reverse
-from .forms import SignUpFrm, UsrUpdateFrm, UpdatePasswordFrm, SignInFrm
+from .forms import (SignUpFrm, UsrUpdateFrm, UpdatePasswordFrm,
+SignInFrm, mail_for_password_recovery_frm, CreatePasswordFrm)
 from magazine.models import Profile, Album
 from magazine.blogpublishing import frmProfile
 from magazine.decorations import add_def_group_if_not_exist
@@ -16,7 +17,7 @@ from django.contrib.auth import (authenticate, get_user_model, login, logout,)
 from django.utils.encoding import force_bytes, force_text, DjangoUnicodeDecodeError
 from django.utils.http import urlsafe_base64_encode, urlsafe_base64_decode
 from django.contrib.sites.shortcuts import get_current_site
-from .utils import token_generator
+from .utils import token_generator, token_generator_general
 from django.template.loader import get_template
 from django.template import Context
 from .members import is_username_active
@@ -45,7 +46,6 @@ def login_view(request):
         #user = authenticate(username=username, password=password)
         #if is_username_active(username):
         username = None
-        print('active mother cucker')
         try:
             user_obj = User.objects.filter(email=username_input)[0]
             username = user_obj.username
@@ -101,7 +101,42 @@ def updateProfileV(request, id):
 
 
 
+def mail_for_password_recovery(request):
+    form = mail_for_password_recovery_frm(request.POST or None)
+    if form.is_valid():
+        body_template_name = 'restore_password'
+        subject = 'message from judonazism, restore your password'
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email)[0]
+        url_to_go = "users:create-new-password"
+        create_and_send_activation_link(body_template_name, subject, user, url_to_go, request)
+        return render(request, 'registration/mail_for_password_recovery.html', {'form' :form, 'no_error':'true'})
+    return render(request, 'registration/mail_for_password_recovery.html', {'form' :form, 'no_error':'false'})
 
+def create_and_send_activation_link(body_template_name, subject, user, url_to_go, request):
+    active_url = create_activation_link(user, url_to_go, request)
+    msg_htmly = get_template('general/' + body_template_name + '.html')
+    msg_plaintext = get_template('general/' + body_template_name + '.txt')
+    dict =  {'username':user.username, 'active_url':active_url}
+    text_content = msg_plaintext.render(dict)
+    html_content = msg_htmly.render(dict)
+
+    email = EmailMultiAlternatives(
+        subject,
+        text_content,
+        'noreply@semycolon.com',
+        [user.email],
+     )
+    email.attach_alternative(html_content, "text/html")
+    #email.send(fail_silently=True)
+    EmailThread(email).start()
+
+def create_activation_link(user, url_to_go, request):
+    uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+    domain  = get_current_site(request).domain
+    link = reverse(url_to_go, kwargs={'uidb64':uidb64, 'token':token_generator_general.make_token(user)})
+    active_url = 'http://' + domain + link
+    return active_url
 
 
 @add_def_group_if_not_exist(def_group = 'members')
@@ -157,33 +192,60 @@ def SignUp(request):
     template_name = 'users/signup.html'
     return render(request, template_name, {'form' :form, 'no_error':'false'})
 
+def create_new_password(request, uidb64, token):
+    try:
+        
+        id = force_text(urlsafe_base64_decode(uidb64))
+        user = User.objects.get(pk=id)
+        print('user resotre passowrd name' + user.username)
+
+
+        if not token_generator_general.check_token(user, token):
+
+
+            return redirect('users:SignIn')
+
+
+        template_name = 'registration/create_new_password.html'
+        form = CreatePasswordFrm(request.POST or None)
+        if request.method == 'POST':
+            if not form.is_valid():
+                return render(request, template_name, {'form':form} )
+            password = form.cleaned_data.get('new_password2')
+            user.set_password(password)
+            user.save()
+            login_user = authenticate(username=user.username, password=password)
+
+            if is_username_active(user.username):
+                login(request, login_user)
+                return redirect('magazine:magazineNews')
+
+        return render(request, template_name, {'form':form} )
+
+
+    except Exception as e:
+        return redirect('magazine:magazineNews')
+
+
+
 class verificationView(View):
     def get(self, request, uidb64, token):
         try:
-            print('try to decode')
             id = force_text(urlsafe_base64_decode(uidb64))
-            print('decode done')
-            print('decode id is ' + str(id))
             user = User.objects.get(pk=id)
-            print('user is ' + str(user))
 
             #check if linke was already activated before
             if not token_generator.check_token(user, token):
                 #this mean user click the linke before
-                print('print linked already pressed before')
                 return redirect('users:SignIn')
                 #return redirect('magazine:magazineNews')
-            print('is actovate?')
             if user.is_active:
                 return redirect('users:SignIn')
                 #return redirect('magazine:magazineNews')
             user.is_active = True
-            print('before save')
             user.save()
-            print('saved')
 
             messages.success(request, 'Account activated successfully')
-            print('message')
             return redirect('users:SignIn')
             #return redirect('magazine:magazineNews')
 

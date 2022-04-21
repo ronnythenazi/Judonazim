@@ -56,8 +56,12 @@
           </span>
         </div>
       </div>
-      <div class="signfieldcolumn" style="width:100%;align-items:flex-end;">
-        <button type="submit" class="subscribe btn-loader btn-loader-small">התחבר</button>
+      <div class="signfieldcolumn" style="width:100%;align-items:flex-start;">
+        <div class="signfieldrow" style="width:100%;justify-content:space-between;margin-bottom:30px;">
+          <a class="forget-password-link" href="{% url 'users:forget-password-mail' %}">שכחתי סיסמה</a>
+         <button type="submit" class="subscribe btn-loader btn-loader-small">התחבר</button>
+
+        </div>
       </div>
     </div>
 
