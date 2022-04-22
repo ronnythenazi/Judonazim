@@ -2,6 +2,7 @@
 {%extends 'magazine/base.html'%}
 {%load static%}
 {% load tz %}
+{% load substraction %}
 
 
 {%block meta%}
@@ -182,7 +183,7 @@
             <div  class="super-tiny-row-center-align rate-com-form" style="gap:5px;">
               <input type="hidden" class="com_pk" value="{{comment.pk}}"/>
               <strong class="order-num" style="left:10px;position:relative;color:#E00041">
-              {{forloop.counter}}
+              {{ object.comments.all|length|subtract:forloop.counter0 }}
             </strong>
               <span class="order-num" style="left:10px;position:relative;">
                 {% if comment.comment_usr.profile.profile_img.url %}
