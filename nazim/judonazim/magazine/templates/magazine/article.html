@@ -36,12 +36,16 @@
      {%block body%}
 
      <style>
-     .item, .post
+     .post
      {
        overflow-x: hidden;
+     }
+     .item :not(.item, img, iframe)
+     {
+       max-width:600px;
 
      }
-     
+
      .item img
      {
        max-height:400px;
